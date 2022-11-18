@@ -28,6 +28,8 @@ public class AgentsData
     public List<AgentData> positions;
 
     public AgentsData() => this.positions = new List<AgentData>();
+
+    //public BoxData() => this.positions = new List<AgentData>(); //--> Cambios
 }
 
 public class AgentController : MonoBehaviour
@@ -36,16 +38,17 @@ public class AgentController : MonoBehaviour
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
     string getObstaclesEndpoint = "/getObstacles";
+    //string getBoxEndpoint = "/getBox"; //--> cambios
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
-    AgentsData agentsData, obstacleData;
+    AgentsData agentsData, obstacleData;//, BoxData; //--> cambios 211
     Dictionary<string, GameObject> agents;
     Dictionary<string, Vector3> prevPositions, currPositions;
 
     bool updated = false, started = false;
 
-    public GameObject agentPrefab, obstaclePrefab, floor;
-    public int NAgents, width, height;
+    public GameObject agentPrefab, obstaclePrefab, floor, BoxPrefab;//--> cambios
+    public int NAgents, width, height;//, XBox;//-->cambios
     public float timeToUpdate = 5.0f;
     private float timer, dt;
 
@@ -53,6 +56,8 @@ public class AgentController : MonoBehaviour
     {
         agentsData = new AgentsData();
         obstacleData = new AgentsData();
+        //cambios
+        //BoxData = new BoxData();//--> cambios
 
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
@@ -60,7 +65,10 @@ public class AgentController : MonoBehaviour
         agents = new Dictionary<string, GameObject>();
 
         floor.transform.localScale = new Vector3((float)width / 10, 1, (float)height / 10);
-        floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 0, (float)height / 2 - 0.5f);
+        floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 1, (float)height / 2 - 0.5f);
+
+        //Box.transform.localScale = new Vector3((float)width / 10, 0, (float)height / 10);
+        //Box.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 1, (float)height / 2 - 0.5f);
 
         timer = timeToUpdate;
 
@@ -91,6 +99,8 @@ public class AgentController : MonoBehaviour
 
                 agents[agent.Key].transform.localPosition = interpolated;
                 if (direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction);
+
+                //aqui va algo de las cajas?
             }
 
             // float t = (timer / timeToUpdate);
@@ -118,7 +128,8 @@ public class AgentController : MonoBehaviour
         form.AddField("NAgents", NAgents.ToString());
         form.AddField("width", width.ToString());
         form.AddField("height", height.ToString());
-
+        //cambio
+        //form.AddField("XBox", Xbox.ToString());
         UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
         www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -134,6 +145,8 @@ public class AgentController : MonoBehaviour
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetAgentsData());
             StartCoroutine(GetObstacleData());
+            //cambios
+            //StartCoroutine(GetBoxData());
         }
     }
 
@@ -190,4 +203,25 @@ public class AgentController : MonoBehaviour
             }
         }
     }
+    /*
+    IEnumerator GetBoxData()
+    {
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getBoxEndpoint);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+            Debug.Log(www.error);
+        else
+        {
+            BoxData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
+
+            Debug.Log(BoxData.positions);
+
+            foreach (AgentData Box in BoxData.positions)
+            {
+                Instantiate(BoxPrefab, new Vector3(Box.x, Box.y, Box.z), Quaternion.identity);
+            }
+        }
+    }
+    */
 }
