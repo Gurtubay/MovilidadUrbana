@@ -1,6 +1,5 @@
 # TC2008B. Sistemas Multiagentes y Gráficas Computacionales
-# Python flask server to interact with Unity. Based on the code provided by Sergio Ruiz.
-# Octavio Navarro. October 2021
+# Python flask server to interact with Unity. Based on the code provided by Octavio Navarro.
 
 from flask import Flask, request, jsonify
 from RandomAgents import *

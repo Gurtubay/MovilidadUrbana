@@ -28,8 +28,6 @@ public class AgentsData
     public List<AgentData> positions;
 
     public AgentsData() => this.positions = new List<AgentData>();
-
-    //public BoxData() => this.positions = new List<AgentData>(); //--> Cambios
 }
 
 public class AgentController : MonoBehaviour
@@ -38,17 +36,18 @@ public class AgentController : MonoBehaviour
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
     string getObstaclesEndpoint = "/getObstacles";
-    //string getBoxEndpoint = "/getBox"; //--> cambios
+    string getBoxEndpoint = "/getBox";//--> cambios
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
-    AgentsData agentsData, obstacleData;//, BoxData; //--> cambios 211
+    AgentsData agentsData, obstacleData, BoxData;//--> cambios 211
     Dictionary<string, GameObject> agents;
     Dictionary<string, Vector3> prevPositions, currPositions;
+    Dictionary<string, Vector3> boxInicial, boxFinal;
 
     bool updated = false, started = false;
 
     public GameObject agentPrefab, obstaclePrefab, floor, BoxPrefab;//--> cambios
-    public int NAgents, width, height;//, XBox;//-->cambios
+    public int NAgents, width, height, XBox;//-->cambios
     public float timeToUpdate = 5.0f;
     private float timer, dt;
 
@@ -57,18 +56,17 @@ public class AgentController : MonoBehaviour
         agentsData = new AgentsData();
         obstacleData = new AgentsData();
         //cambios
-        //BoxData = new BoxData();//--> cambios
+        BoxData = new AgentsData();//--> cambios
+        boxInicial = new Dictionary<string, Vector3>();
+        boxFinal = new Dictionary<string, Vector3>();
 
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
 
         agents = new Dictionary<string, GameObject>();
 
-        floor.transform.localScale = new Vector3((float)width / 10, 1, (float)height / 10);
+        floor.transform.localScale = new Vector3((float)width / 10, 3, (float)height / 10);
         floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 1, (float)height / 2 - 0.5f);
-
-        //Box.transform.localScale = new Vector3((float)width / 10, 0, (float)height / 10);
-        //Box.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 1, (float)height / 2 - 0.5f);
 
         timer = timeToUpdate;
 
@@ -129,7 +127,7 @@ public class AgentController : MonoBehaviour
         form.AddField("width", width.ToString());
         form.AddField("height", height.ToString());
         //cambio
-        //form.AddField("XBox", Xbox.ToString());
+        form.AddField("XBox", XBox.ToString());
         UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
         www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -146,7 +144,7 @@ public class AgentController : MonoBehaviour
             StartCoroutine(GetAgentsData());
             StartCoroutine(GetObstacleData());
             //cambios
-            //StartCoroutine(GetBoxData());
+            StartCoroutine(GetBoxData());
         }
     }
 
@@ -178,7 +176,7 @@ public class AgentController : MonoBehaviour
                     currPositions[agent.id] = newAgentPosition;
                 }
             }
-
+            //XBox.transform.parent = robot.transform
             updated = true;
             if (!started) started = true;
         }
@@ -203,7 +201,7 @@ public class AgentController : MonoBehaviour
             }
         }
     }
-    /*
+    
     IEnumerator GetBoxData()
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getBoxEndpoint);
@@ -223,5 +221,5 @@ public class AgentController : MonoBehaviour
             }
         }
     }
-    */
+    
 }
