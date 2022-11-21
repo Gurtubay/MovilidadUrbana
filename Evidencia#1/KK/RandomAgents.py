@@ -23,6 +23,9 @@ from mesa.visualization.modules import CanvasGrid
 #-------------#
 #--- AGENT ---#
 #-------------#
+piles=0
+puntoX=0
+box_limit=[]
 """
 Clase del agente "Stevedor" el robot que se encargara de transportar y apilar las cajas
 """
@@ -32,24 +35,27 @@ class Stevedor(mesa.Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
         self.carring = False #Variable con el estado actual del robot si esta cargando con una caja o no
-        self.piles_plus = 0 #Variable con la posicion en x de donde seran apiladas las cajas
-        self.piles = 0 #Variable que cuenta las cajas en una misma pila
+        #self.files_plus = 0 #Variable con la posicion en x de donde seran apiladas las cajas
+        #self.piles = 0 #Variable que cuenta las cajas en una misma pila
         self.stepsCount = 0 #Cuenta los pasos de cada agente
         self.boxCount = 0 #Cuenta las cajas procesadas por cada agente
         self.stack_actual = (0,1) #Coordenadas de la posicion de la primera pila de cajas
-        self.box_limit = [] #queria hacer una lista con las posiciones de los stacks para que no tomaran cajs de ahí
+        #box_limit = [] #queria hacer una lista con las posiciones de los stacks para que no tomaran cajs de ahí
+        
+        
  
     """
     Funcion que le permite al robot moverse aleatoreamente hasta encontrar una caja, entonces el robot cargara la caja y se movera a la posicion de apilado
     """
     def step(self):
+        global puntoX
         self.stepsCount +=1
         if self.carring == True:
             self.move_1_1()
             #print("step" + str(self.piles))
         else:
             self.move()
-            if self.pos not in self.box_limit:
+            if self.pos not in box_limit:
                 position = self.model.grid.get_cell_list_contents([self.pos])
                 box = [obj for obj in position if isinstance(obj, Box)]
                 if len(box) > 0:
@@ -60,28 +66,32 @@ class Stevedor(mesa.Agent):
     Funcion que cuenta la cantidad de cajas en una pila y determina cuando hay que hacer una nueva pila y en donde estara esta nueva pila, ademas de bloquear las cajas ya apiladas
     """
     def stack(self):
-        if self.piles==0:
-            self.box_limit.append((self.piles_plus,1))
+        global piles
+        global puntoX
+        if piles==0:
+            box_limit.append((puntoX,1))
+        piles +=1
+        print(piles)
         self.carring = False
+        print(self.boxCount)
         self.boxCount +=1
-        self.piles += 1
-        print(self.piles)
-        if self.piles == 5:
-            self.piles = 0 #numero de cajas
-            print(self.piles_plus)
-            self.piles_plus += 1 #stacks
-            print(self.piles_plus)
+        print(self.boxCount)
+        if piles == 5:
+            piles=0 #numero de cajas
+            print(puntoX)
+            puntoX += 1 #stacks
+            print(puntoX)
 
     """
     Funcion para que el robot se mueva a la poisicon de apilado actual
     """
     def move_1_1(self):
         x,y = self.pos
-        self.piles
-        self.piles_plus
+        #self.piles
+        puntoX
 
-        if x != self.piles_plus:
-            direccion = -1 if self.piles_plus - x < 0 else 1 #direccion
+        if x != puntoX:
+            direccion = -1 if puntoX - x < 0 else 1 #direccion
             self.model.grid.move_agent(self,(x + direccion,y))
             self.model.grid.move_agent(self.box_carried,(x + direccion,y))
             return
@@ -135,7 +145,7 @@ class CarringModel(Model):
         d = (p*(width*height))/100
 
         # Creación de los Agentes
-        for i in range(X):
+        for i in range(5):
             carr = Stevedor(self.next_id(),self)
             self.schedule.add(carr)
             self.grid.place_agent(carr,(1,1))
