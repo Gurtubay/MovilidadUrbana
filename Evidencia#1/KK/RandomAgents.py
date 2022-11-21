@@ -142,21 +142,34 @@ class CarringModel(Model):
         self.schedule = mesa.time.RandomActivation(self)
         self.currentsteps = 0
         self.maxsteps = e
+        self.occupied=[]
         d = (p*(width*height))/100
 
         # Creación de los Agentes
         for i in range(5):
-            carr = Stevedor(self.next_id(),self)
-            self.schedule.add(carr)
-            self.grid.place_agent(carr,(1,1))
+            while True:
+                x = self.random.randrange(self.grid.width)
+                y = self.random.randrange(self.grid.height)
+                pos=(x,y)
+                if pos not in self.occupied:
+                    carr = Stevedor(self.next_id(),self)
+                    self.schedule.add(carr)
+                    self.grid.place_agent(carr,(pos))
+                    self.occupied.append((pos))
+                    break
             
         # Colocación aleatoria de la Box. 
         for i in range(round(d)):
-            boxes = Box(self.next_id(),self)
-            self.schedule.add(boxes)
-            x = self.random.randrange(self.grid.width)
-            y = self.random.randrange(self.grid.height)
-            self.grid.place_agent(boxes,(x,y))
+            while True:
+                x = self.random.randrange(self.grid.width)
+                y = self.random.randrange(self.grid.height)
+                pos=(x,y)
+                if pos not in self.occupied:
+                    boxes = Box(self.next_id(),self)
+                    self.schedule.add(boxes)
+                    self.grid.place_agent(boxes,(pos))
+                    self.occupied.append((pos))
+                    break
     
     def step(self):
         self.schedule.step()
