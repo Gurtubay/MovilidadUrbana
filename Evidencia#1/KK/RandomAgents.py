@@ -5,9 +5,9 @@
 # -----
 # Autores:
 #   Sebastián Burgos Alanís A01746459 
-#   Josue Yorke
-#   José Guturbay
-#   Fabio
+#   Josué Bernardo Villegas Nuño A01751694
+#   José Guturbay Moreno A01373750
+#   Favio Mariano Dileva Charles A01745465
 # -----
 # Fecha de creación:
 #   17/11/22
@@ -51,12 +51,13 @@ class Stevedor(mesa.Agent):
                     #if self.piles == 5: #numero de cajas por stacks
 
     def stack(self):
+        if self.piles==0:
+            self.box_limit.append((self.piles_plus,1))
         self.carring = False
         self.piles += 1
         if self.piles == 5:
             self.piles = 0 #numero de cajas
             self.piles_plus += 1 #stacks
-            self.box_limit.append((self.piles_plus,1))
 
     #teniendo la Box, se moverá a la posición indicada para apliar las cajas. 
     def move_1_1(self):
