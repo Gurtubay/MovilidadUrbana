@@ -35,8 +35,8 @@ public class AgentController : MonoBehaviour
     // private string url = "https://agents.us-south.cf.appdomain.cloud/";
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
-    string getObstaclesEndpoint = "/getObstacles";
-    string getBoxEndpoint = "/getBox";//--> cambios
+    //string getObstaclesEndpoint = "/getObstacles";
+    string getBoxEndpoint = "/getBoxes";//--> cambios
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     AgentsData agentsData, obstacleData, BoxData;//--> cambios 211
@@ -142,7 +142,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Configuration upload complete!");
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetAgentsData());
-            StartCoroutine(GetObstacleData());
+            //StartCoroutine(GetObstacleData());
             //cambios
             StartCoroutine(GetBoxData());
         }
@@ -181,7 +181,7 @@ public class AgentController : MonoBehaviour
             if (!started) started = true;
         }
     }
-
+/*
     IEnumerator GetObstacleData()
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getObstaclesEndpoint);
@@ -201,7 +201,7 @@ public class AgentController : MonoBehaviour
             }
         }
     }
-    
+  */  
     IEnumerator GetBoxData()
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getBoxEndpoint);

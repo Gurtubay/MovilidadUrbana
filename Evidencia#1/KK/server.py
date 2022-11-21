@@ -6,12 +6,13 @@ height = 10
 X = 10 #numero de agentes.
 p = 25 #porcentaje de cajas respecto al width y height
 e = 0  #tiempo de ejecución pero no afecta en nada. 
+currentStep = 0
 
 app = Flask("Equipo#1")
 
 @app.route('/init', methods=['POST', 'GET'])
 def initModel():
-    global width, height, X, p, e, carringModel
+    global width, height, X, p, e, carringModel, currentStep 
 
     if request.method == 'POST':
         width = int(request.form.get('width'))
@@ -19,10 +20,11 @@ def initModel():
         X = int(request.form.get('NAgents'))
         p = float(request.form.get('XBox'))
         e = 0
+        currentStep = 0
 
         print(request.form)
         print(width, height, X, p)
-        carringModel = CarringModel(width, height, X, p)
+        carringModel = CarringModel(width, height, X, p, e)
 
         return jsonify({"message":"Parameters recieved, model initiated."})
 

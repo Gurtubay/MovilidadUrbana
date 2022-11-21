@@ -160,17 +160,17 @@ class CarringModel(Model):
     
     def step(self):
         self.schedule.step()
-
+"""
 
 #--------------#
 #--- SERVER ---#
 #--------------#
 
-"""
+
 Función para crear el servidor, el Canvas, asignar el puerto de servidor,
 definir los colores y figuras de los agentes así como la asiganción de los valores para 
 crear Numero de Agentes, Espacio de habitación, Porcentaje de Boxes y tiempo de ejecución. 
-"""
+
 def cleaning_port(agent):
 
     portrayal = {"Shape":"circle","Filled":"true", "r":0.5}
@@ -202,3 +202,4 @@ server.port = 851
 
 # Lanzamiento del servidor. 
 server.launch()
+"""
