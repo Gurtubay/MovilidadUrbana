@@ -32,46 +32,52 @@ class Stevedor(mesa.Agent):
         self.carring = False
         self.piles_plus = 0
         self.piles = 0
+        self.stack_actual = (0,1)
         self.box_limit = [] #queria hacer una lista con las posiciones de los stacks para que no tomaran cajs de ahí
 
     # Si la celda tiene Box, la cargará. 
     def step(self):
         if self.carring == True:
             self.move_1_1()
-            print("step" + str(self.piles))
+            #print("step" + str(self.piles))
         else:
             self.move()
-            position = self.model.grid.get_cell_list_contents([self.pos])
-            box = [obj for obj in position if isinstance(obj, Box)]
-            if len(box) > 0:
-                self.carring = True
-                self.box_carried = self.random.choice(box)
-                if self.piles == 5: #numero de cajas por stacks
-                    self.piles = 0 #numero de cajas
-                    self.piles_plus += 1 #stacks
-            
+            if self.pos not in self.box_limit:
+                position = self.model.grid.get_cell_list_contents([self.pos])
+                box = [obj for obj in position if isinstance(obj, Box)]
+                if len(box) > 0:
+                    self.carring = True
+                    self.box_carried = self.random.choice(box)
+                    #if self.piles == 5: #numero de cajas por stacks
+
+    def stack(self):
+        self.carring = False
+        self.piles += 1
+        if self.piles == 5:
+            self.piles = 0 #numero de cajas
+            self.piles_plus += 1 #stacks
+            self.box_limit.append((self.piles_plus,1))
 
     #teniendo la Box, se moverá a la posición indicada para apliar las cajas. 
     def move_1_1(self):
         x,y = self.pos
         self.piles
         self.piles_plus
-        if x > self.piles_plus+1:
-            self.model.grid.move_agent(self,(x-1,y))
-            self.model.grid.move_agent(self.box_carried,(x-1,y))
-        elif x == 0+self.piles_plus:
-            self.model.grid.move_agent(self,(x+1,y))
-            self.model.grid.move_agent(self.box_carried,(x+1,y))
-        elif y > 1:
-            self.model.grid.move_agent(self,(x,y-1))
-            self.model.grid.move_agent(self.box_carried,(x,y-1))
-        elif y == 0:
-            self.model.grid.move_agent(self,(x,y+1))
-            self.model.grid.move_agent(self.box_carried,(x,y+1))
-        elif x == self.piles_plus+1 and y == 1:
-            self.carring = False
-            self.piles += 1
-            
+
+        if x != self.piles_plus:
+            direccion = -1 if self.piles_plus - x < 0 else 1 #direccion
+            self.model.grid.move_agent(self,(x + direccion,y))
+            self.model.grid.move_agent(self.box_carried,(x + direccion,y))
+            return
+        
+        elif y != 1:
+            direccion = -1 if 1 - y < 0 else 1 #direccion
+            self.model.grid.move_agent(self,(x,y + direccion))
+            self.model.grid.move_agent(self.box_carried,(x,y + direccion))
+            return
+
+        else:
+            self.stack()
             
     # Función para mover al agente a una posición aleatoria disponible.
     def move(self):
@@ -127,7 +133,7 @@ class CarringModel(Model):
 #--- SERVER ---#
 #--------------#
 
-"""
+
 def cleaning_port(agent):
     # Función para crear el servidor, el Canvas, asignar el puerto de servidor,
     #   definir los colores y figuras de los agentes así como la asiganción de los valores para 
@@ -149,7 +155,7 @@ def cleaning_port(agent):
 
 # Diseño del Canvas y definición de valores. 
 grid = CanvasGrid(cleaning_port, 10, 10, 500, 500)
-server = ModularServer(CarringModel,[grid],"carringModel",{"width":10,"height":10,"x":1,"p":25,"e":100})
+server = ModularServer(CarringModel,[grid],"carringModel",{"width":10,"height":10,"X":1,"p":25,"e":100})
 
 chart_element = mesa.visualization.ChartModule(
     [
@@ -161,4 +167,3 @@ server.port = 851
 
 # Lanzamiento del servidor. 
 server.launch()
-"""

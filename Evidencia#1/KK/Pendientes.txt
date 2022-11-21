@@ -1,6 +1,5 @@
 Falta hacer lo siguiente:
  - ocurre un error cuando los agentes empiezan a apilar las cajas en stacks de 5
-   Y cuando se salen del rango de y. Linas 55-73
  - Falta indicarle al agente que cuando se llena el stack de 5, no pueda entrar a la casilla
    porque luego toma de esos stacks y el robot se bugea. 
  - No se lleva el numero de cajas por agentes (lo pide la rubrica)

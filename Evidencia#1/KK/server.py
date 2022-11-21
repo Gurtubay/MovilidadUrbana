@@ -34,12 +34,15 @@ def getAgents():
         agentPositions = [{"id": str(X.unique_id), "x": x, "y":1, "z":z} for (X, x, z) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
 
         return jsonify({'positions':agentPositions})
+#duda
+@app.route('/getBoxes', methods=['GET'])
+def getBoxes():
+    global carringModel
 
-#Falta la app route de las cajas
-#
-#
-#
-#
+    if request.method == 'GET':
+        boxPositions = [{"id": str(d.unique_id), "x": x, "y":1, "z":z} for (d, x, z) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
+
+        return jsonify({'positions':boxPositions})
 
 @app.route('/update', methods=['GET'])
 def updateModel():
