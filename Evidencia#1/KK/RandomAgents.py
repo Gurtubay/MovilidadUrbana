@@ -23,20 +23,27 @@ from mesa.visualization.modules import CanvasGrid
 #-------------#
 #--- AGENT ---#
 #-------------#
-
+"""
+Clase del agente "Stevedor" el robot que se encargara de transportar y apilar las cajas
+"""
 class Stevedor(mesa.Agent):
     # Clase para crear el Agente, definir su acción y su movimiento. 
     # Constructor del agente de Stevedor y sus atributos.
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
-        self.carring = False
-        self.piles_plus = 0
-        self.piles = 0
-        self.stack_actual = (0,1)
+        self.carring = False #Variable con el estado actual del robot si esta cargando con una caja o no
+        self.piles_plus = 0 #Variable con la posicion en x de donde seran apiladas las cajas
+        self.piles = 0 #Variable que cuenta las cajas en una misma pila
+        self.stepsCount = 0 #Cuenta los pasos de cada agente
+        self.boxCount = 0 #Cuenta las cajas procesadas por cada agente
+        self.stack_actual = (0,1) #Coordenadas de la posicion de la primera pila de cajas
         self.box_limit = [] #queria hacer una lista con las posiciones de los stacks para que no tomaran cajs de ahí
-
-    # Si la celda tiene Box, la cargará. 
+ 
+    """
+    Funcion que le permite al robot moverse aleatoreamente hasta encontrar una caja, entonces el robot cargara la caja y se movera a la posicion de apilado
+    """
     def step(self):
+        self.stepsCount +=1
         if self.carring == True:
             self.move_1_1()
             #print("step" + str(self.piles))
@@ -49,17 +56,25 @@ class Stevedor(mesa.Agent):
                     self.carring = True
                     self.box_carried = self.random.choice(box)
                     #if self.piles == 5: #numero de cajas por stacks
-
+    """
+    Funcion que cuenta la cantidad de cajas en una pila y determina cuando hay que hacer una nueva pila y en donde estara esta nueva pila, ademas de bloquear las cajas ya apiladas
+    """
     def stack(self):
         if self.piles==0:
             self.box_limit.append((self.piles_plus,1))
         self.carring = False
+        self.boxCount +=1
         self.piles += 1
+        print(self.piles)
         if self.piles == 5:
             self.piles = 0 #numero de cajas
+            print(self.piles_plus)
             self.piles_plus += 1 #stacks
+            print(self.piles_plus)
 
-    #teniendo la Box, se moverá a la posición indicada para apliar las cajas. 
+    """
+    Funcion para que el robot se mueva a la poisicon de apilado actual
+    """
     def move_1_1(self):
         x,y = self.pos
         self.piles
@@ -80,7 +95,10 @@ class Stevedor(mesa.Agent):
         else:
             self.stack()
             
-    # Función para mover al agente a una posición aleatoria disponible.
+    """
+    Funcion para que el robot se mueva aleatoreamente
+    """
+    
     def move(self):
         possible_steps = self.model.grid.get_neighborhood(self.pos, True, True)
         chosen_step = self.random.choice(possible_steps)
@@ -89,7 +107,9 @@ class Stevedor(mesa.Agent):
         if len(stevedor) < 1:
             self.model.grid.move_agent(self, chosen_step)
             
-
+"""
+Clase del agente caja
+"""
 class Box(mesa.Agent):
     # Constructor para la creación de la Box. 
     def __init__(self,unique_id,model):
@@ -99,9 +119,11 @@ class Box(mesa.Agent):
 #--- MODEL ---#
 #-------------#
 
+"""
+Clase para definir el Modelo, asiganción de variables, creación de 1 o más Agentes. 
+Constructor del Modelo con las variables requeridas
+"""
 class CarringModel(Model):
-    # Clase para definir el Modelo, asiganción de variables, creación de 1 o más Agentes. 
-    # Constructor del Modelo con las variables requeridas
     def __init__(self,width,height,X,p,e):
         super().__init__()
         self.width = width
@@ -134,11 +156,13 @@ class CarringModel(Model):
 #--- SERVER ---#
 #--------------#
 
-
+"""
+Función para crear el servidor, el Canvas, asignar el puerto de servidor,
+definir los colores y figuras de los agentes así como la asiganción de los valores para 
+crear Numero de Agentes, Espacio de habitación, Porcentaje de Boxes y tiempo de ejecución. 
+"""
 def cleaning_port(agent):
-    # Función para crear el servidor, el Canvas, asignar el puerto de servidor,
-    #   definir los colores y figuras de los agentes así como la asiganción de los valores para 
-    #   crear Numero de Agentes, Espacio de habitación, Porcentaje de Boxes y tiempo de ejecución. 
+
     portrayal = {"Shape":"circle","Filled":"true", "r":0.5}
     square = {"Shape":"square", "Filled":"true", }
     # Diseño de los Agentes
