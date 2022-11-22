@@ -294,7 +294,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 4.5, y: 29, z: 4.4}
+  m_LocalPosition: {x: 4.5, y: 300, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -331,13 +331,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agentPrefab: {fileID: 1438238462547669973, guid: d39a8cc34078ea7468a4f82a565699bb, type: 3}
-  obstaclePrefab: {fileID: 3795793276171964352, guid: fc055decdff130a4daf98f8d20e634a3, type: 3}
   floor: {fileID: 1973861358}
   BoxPrefab: {fileID: 1192641458597302, guid: acbdb13218a23b644b2a15c0a6fbd3f7, type: 3}
   NAgents: 10
   width: 10
   height: 10
-  XBox: 0
+  XBox: 30
   timeToUpdate: 2
 --- !u!4 &1249243078
 Transform:

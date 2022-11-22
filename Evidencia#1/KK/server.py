@@ -33,7 +33,7 @@ def getAgents():
     global carringModel
 
     if request.method == 'GET':
-        agentPositions = [{"id": str(X.unique_id), "x": x, "y":1, "z":z} for (X, x, z) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
+        agentPositions = [{"id": str(X.unique_id), "x": x, "y":1, "z":y} for (X, x,y) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
 
         return jsonify({'positions':agentPositions})
 #duda
@@ -42,7 +42,7 @@ def getBoxes():
     global carringModel
 
     if request.method == 'GET':
-        boxPositions = [{"id": str(d.unique_id), "x": x, "y":1, "z":z} for (d, x, z) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
+        boxPositions = [{"id": str(d.unique_id), "x": x, "y":1, "z":y} for (d, x, y) in carringModel.grid.coord_iter() if isinstance(d, Box)]
 
         return jsonify({'positions':boxPositions})
 

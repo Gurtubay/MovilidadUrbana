@@ -52,7 +52,7 @@ class Stevedor(mesa.Agent):
         self.stepsCount +=1
         if self.carring == True:
             self.move_1_1()
-            #print("step" + str(self.piles))
+            print("hermana del Jos" +str([self.pos]))
         else:
             self.move()
             if self.pos not in box_limit:
@@ -146,7 +146,7 @@ class CarringModel(Model):
         d = (p*(width*height))/100
 
         # Creación de los Agentes
-        for i in range(5):
+        for i in range(X):
             while True:
                 x = self.random.randrange(self.grid.width)
                 y = self.random.randrange(self.grid.height)

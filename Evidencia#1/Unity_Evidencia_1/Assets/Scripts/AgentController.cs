@@ -22,6 +22,20 @@ public class AgentData
 }
 
 [Serializable]
+public class BoxData
+{
+    public string id;
+    public float x, y, z;
+
+    public BoxData(string id, float x, float y, float z)
+    {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+}
+[Serializable]
 
 public class AgentsData
 {
@@ -30,23 +44,36 @@ public class AgentsData
     public AgentsData() => this.positions = new List<AgentData>();
 }
 
+
+[Serializable]
+public class BoxesData
+{
+    public List<BoxData> positions;
+
+    public BoxesData() => this.positions = new List<BoxData>();
+}
+
 public class AgentController : MonoBehaviour
 {
     // private string url = "https://agents.us-south.cf.appdomain.cloud/";
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
+    
     //string getObstaclesEndpoint = "/getObstacles";
     string getBoxEndpoint = "/getBoxes";//--> cambios
+    
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
-    AgentsData agentsData, obstacleData, BoxData;//--> cambios 211
+    AgentsData agentsData;//--> cambios 211
+    BoxesData boxesData;
     Dictionary<string, GameObject> agents;
+    Dictionary<string, GameObject> boxes;
     Dictionary<string, Vector3> prevPositions, currPositions;
     Dictionary<string, Vector3> boxInicial, boxFinal;
 
     bool updated = false, started = false;
 
-    public GameObject agentPrefab, obstaclePrefab, floor, BoxPrefab;//--> cambios
+    public GameObject agentPrefab, floor, BoxPrefab;//--> cambios
     public int NAgents, width, height, XBox;//-->cambios
     public float timeToUpdate = 5.0f;
     private float timer, dt;
@@ -54,19 +81,19 @@ public class AgentController : MonoBehaviour
     void Start()
     {
         agentsData = new AgentsData();
-        obstacleData = new AgentsData();
         //cambios
-        BoxData = new AgentsData();//--> cambios
-        boxInicial = new Dictionary<string, Vector3>();
-        boxFinal = new Dictionary<string, Vector3>();
+        boxesData = new BoxesData();//--> cambios
+       // boxInicial = new Dictionary<string, Vector3>();
+       // boxFinal = new Dictionary<string, Vector3>();
 
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
 
         agents = new Dictionary<string, GameObject>();
+        boxes = new Dictionary<string, GameObject>();
 
-        floor.transform.localScale = new Vector3((float)width / 10, 3, (float)height / 10);
-        floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 1, (float)height / 2 - 0.5f);
+        floor.transform.localScale = new Vector3((float)width / 1, 1, (float)height / 1);
+        floor.transform.localPosition = new Vector3((float)width / 1 , 1, (float)height / 1 );
 
         timer = timeToUpdate;
 
@@ -116,6 +143,7 @@ public class AgentController : MonoBehaviour
         else
         {
             StartCoroutine(GetAgentsData());
+            StartCoroutine(GetBoxData());
         }
     }
 
@@ -140,11 +168,11 @@ public class AgentController : MonoBehaviour
         else
         {
             Debug.Log("Configuration upload complete!");
-            Debug.Log("Getting Agents positions");
             StartCoroutine(GetAgentsData());
+            Debug.Log("Getting Agents positions");
             //StartCoroutine(GetObstacleData());
             //cambios
-            StartCoroutine(GetBoxData());
+            //StartCoroutine(GetBoxData());
         }
     }
 
@@ -181,6 +209,39 @@ public class AgentController : MonoBehaviour
             if (!started) started = true;
         }
     }
+    IEnumerator GetBoxData()
+    {
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getBoxEndpoint);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+            Debug.Log(www.error);
+        else
+        {
+            boxesData = JsonUtility.FromJson<BoxesData>(www.downloadHandler.text);
+
+            foreach (BoxData box in boxesData.positions)
+            {
+                Vector3 newBoxPosition = new Vector3(box.x, box.y, box.z);
+
+                if (!started)
+                {
+                    prevPositions[box.id] = newBoxPosition;
+                    boxes[box.id] = Instantiate(BoxPrefab, newBoxPosition, Quaternion.identity);
+                }
+                else
+                {
+                    Vector3 currentPosition = new Vector3();
+                    if (currPositions.TryGetValue(box.id, out currentPosition))
+                        prevPositions[box.id] = currentPosition;
+                    currPositions[box.id] = newBoxPosition;
+                }
+            }
+            //XBox.transform.parent = robot.transform
+            updated = true;
+            if (!started) started = true;
+        }
+    }
 /*
     IEnumerator GetObstacleData()
     {
@@ -201,7 +262,7 @@ public class AgentController : MonoBehaviour
             }
         }
     }
-  */  
+  */ /* 
     IEnumerator GetBoxData()
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getBoxEndpoint);
@@ -217,9 +278,12 @@ public class AgentController : MonoBehaviour
 
             foreach (AgentData Box in BoxData.positions)
             {
-                Instantiate(BoxPrefab, new Vector3(Box.x, Box.y, Box.z), Quaternion.identity);
+                Vector3 newBoxPosition = new Vector3(Box.x, Box.y, Box.z);
+
+                Instantiate(BoxPrefab, newBoxPosition, Quaternion.identity);
             }
         }
     }
-    
+ */
+
 }
