@@ -3,8 +3,8 @@ from RandomAgents import *
 
 width = 10 
 height = 10
-X = 10 #numero de agentes.
-p = 25 #porcentaje de cajas respecto al width y height
+X = 5 #numero de agentes.
+p = 10 #porcentaje de cajas respecto al width y height
 e = 0  #tiempo de ejecución pero no afecta en nada. 
 currentStep = 0
 
@@ -33,7 +33,12 @@ def getAgents():
     global carringModel
 
     if request.method == 'GET':
-        agentPositions = [{"id": str(X.unique_id), "x": x, "y":1, "z":y} for (X, x,y) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
+    #agentPositions = [{"id": str(X.unique_id), "x": x, "y":1, "z":y} for (X, x,y) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
+        agentPositions = []
+        for(X,x, y) in carringModel.grid.coord_iter():
+            for i in range(len(X)):
+                if isinstance(X[i], Stevedor):
+                    agentPositions.append({"id": str(X[i].unique_id), "x": x, "y":1, "z":y})
 
         return jsonify({'positions':agentPositions})
 #duda
@@ -42,8 +47,12 @@ def getBoxes():
     global carringModel
 
     if request.method == 'GET':
-        boxPositions = [{"id": str(d.unique_id), "x": x, "y":1, "z":y} for (d, x, y) in carringModel.grid.coord_iter() if isinstance(d, Box)]
-
+        #boxPositions = [{"id": str(d.unique_id), "x": x, "y":1, "z":y} for (d, x, y) in carringModel.grid.coord_iter() if isinstance(d, Box)]
+        boxPositions = []
+        for(d,x, y) in carringModel.grid.coord_iter():
+            for i in range(len(d)):
+                if isinstance(d[i], Box):
+                    boxPositions.append({"id": str(d[i].unique_id), "x": x, "y":1, "z":y})
         return jsonify({'positions':boxPositions})
 
 @app.route('/update', methods=['GET'])

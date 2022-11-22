@@ -12,7 +12,7 @@
 # Fecha de creación:
 #   17/11/22
 # Fecha de modificación:
-#   19/10/22
+#   22/10/22
 # -----
 
 import mesa
@@ -153,6 +153,8 @@ class CarringModel(Model):
                 pos=(x,y)
                 if pos not in self.occupied:
                     carr = Stevedor(self.next_id(),self)
+                    print(str("agents") + str(carr.unique_id))
+                    print(pos)
                     self.schedule.add(carr)
                     self.grid.place_agent(carr,(pos))
                     self.occupied.append((pos))
@@ -166,6 +168,8 @@ class CarringModel(Model):
                 pos=(x,y)
                 if pos not in self.occupied:
                     boxes = Box(self.next_id(),self)
+                    print(str("boxes") + str(boxes.unique_id))
+                    print(pos)
                     self.schedule.add(boxes)
                     self.grid.place_agent(boxes,(pos))
                     self.occupied.append((pos))

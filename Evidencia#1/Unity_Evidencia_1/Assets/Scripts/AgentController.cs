@@ -67,11 +67,12 @@ public class AgentController : MonoBehaviour
     AgentsData agentsData;//--> cambios 211
     BoxesData boxesData;
     Dictionary<string, GameObject> agents;
-    Dictionary<string, GameObject> boxes;
+    //Dictionary<string, GameObject> boxes;
     Dictionary<string, Vector3> prevPositions, currPositions;
     Dictionary<string, Vector3> boxInicial, boxFinal;
 
-    bool updated = false, started = false;
+    bool updatedBoxes = false, startedBoxes = false;
+    bool updatedAgents = false, startedAgents = false;
 
     public GameObject agentPrefab, floor, BoxPrefab;//--> cambios
     public int NAgents, width, height, XBox;//-->cambios
@@ -90,7 +91,7 @@ public class AgentController : MonoBehaviour
         currPositions = new Dictionary<string, Vector3>();
 
         agents = new Dictionary<string, GameObject>();
-        boxes = new Dictionary<string, GameObject>();
+        //boxes = new Dictionary<string, GameObject>();
 
         floor.transform.localScale = new Vector3((float)width / 1, 1, (float)height / 1);
         floor.transform.localPosition = new Vector3((float)width / 1 , 1, (float)height / 1 );
@@ -105,11 +106,12 @@ public class AgentController : MonoBehaviour
         if (timer < 0)
         {
             timer = timeToUpdate;
-            updated = false;
+            updatedAgents = false;
+            updatedBoxes = false;
             StartCoroutine(UpdateSimulation());
         }
 
-        if (updated)
+        if (updatedAgents && updatedBoxes)
         {
             timer -= Time.deltaTime;
             dt = 1.0f - (timer / timeToUpdate);
@@ -172,7 +174,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Getting Agents positions");
             //StartCoroutine(GetObstacleData());
             //cambios
-            //StartCoroutine(GetBoxData());
+            StartCoroutine(GetBoxData());
         }
     }
 
@@ -190,9 +192,9 @@ public class AgentController : MonoBehaviour
             foreach (AgentData agent in agentsData.positions)
             {
                 Vector3 newAgentPosition = new Vector3(agent.x, agent.y, agent.z);
-                Console.WriteLine(agent.positions);
+                //Console.WriteLine(agent.positions);
 
-                if (!started)
+                if (!startedAgents)
                 {
                     prevPositions[agent.id] = newAgentPosition;
                     agents[agent.id] = Instantiate(agentPrefab, newAgentPosition, Quaternion.identity);
@@ -206,8 +208,8 @@ public class AgentController : MonoBehaviour
                 }
             }
             //XBox.transform.parent = robot.transform
-            updated = true;
-            if (!started) started = true;
+            updatedAgents = true;
+            if (!startedAgents) startedAgents = true;
         }
     }
     IEnumerator GetBoxData()
@@ -221,27 +223,28 @@ public class AgentController : MonoBehaviour
         {
             boxesData = JsonUtility.FromJson<BoxesData>(www.downloadHandler.text);
 
-            foreach (BoxData box in boxesData.positions)
+            foreach (BoxData agent in boxesData.positions)
             {
-                Vector3 newBoxPosition = new Vector3(box.x, box.y, box.z);
+                Vector3 newBoxPosition = new Vector3(agent.x, agent.y, agent.z);
 
-                if (!started)
+                if (!startedBoxes)
                 {
-                    prevPositions[box.id] = newBoxPosition;
-                    boxes[box.id] = Instantiate(BoxPrefab, newBoxPosition, Quaternion.identity);
+                    prevPositions[agent.id] = newBoxPosition;
+                    agents[agent.id] = Instantiate(BoxPrefab, newBoxPosition, Quaternion.identity);
                 }
                 else
                 {
                     Vector3 currentPosition = new Vector3();
-                    if (currPositions.TryGetValue(box.id, out currentPosition))
-                        prevPositions[box.id] = currentPosition;
-                    currPositions[box.id] = newBoxPosition;
+                    if (currPositions.TryGetValue(agent.id, out currentPosition))
+                        prevPositions[agent.id] = currentPosition;
+                    currPositions[agent.id] = newBoxPosition;
                 }
             }
             //XBox.transform.parent = robot.transform
-            updated = true;
-            if (!started) started = true;
-        }
+            updatedBoxes = true;
+            if (!startedBoxes) startedBoxes = true;
+                
+        }   
     }
 /*
     IEnumerator GetObstacleData()
