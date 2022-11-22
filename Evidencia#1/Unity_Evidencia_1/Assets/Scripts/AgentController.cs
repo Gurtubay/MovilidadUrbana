@@ -190,6 +190,7 @@ public class AgentController : MonoBehaviour
             foreach (AgentData agent in agentsData.positions)
             {
                 Vector3 newAgentPosition = new Vector3(agent.x, agent.y, agent.z);
+                Console.WriteLine(agent.positions);
 
                 if (!started)
                 {

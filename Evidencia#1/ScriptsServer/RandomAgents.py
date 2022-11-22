@@ -52,7 +52,7 @@ class Stevedor(mesa.Agent):
         self.stepsCount +=1
         if self.carring == True:
             self.move_1_1()
-            print("hermana del Jos" +str([self.pos]))
+            #print("hermana del Jos" +str([self.pos]))
         else:
             self.move()
             if self.pos not in box_limit:
