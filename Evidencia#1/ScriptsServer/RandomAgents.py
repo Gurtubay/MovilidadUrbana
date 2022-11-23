@@ -26,6 +26,7 @@ from mesa.visualization.modules import CanvasGrid
 piles=0
 puntoX=0
 box_limit=[]
+apocalipsis = 0
 """
 Clase del agente "Stevedor" el robot que se encargara de transportar y apilar las cajas
 """
@@ -41,7 +42,7 @@ class Stevedor(mesa.Agent):
         self.boxCount = 0 #Cuenta las cajas procesadas por cada agente
         self.stack_actual = (0,1) #Coordenadas de la posicion de la primera pila de cajas
         #box_limit = [] #queria hacer una lista con las posiciones de los stacks para que no tomaran cajs de ahí
-        
+        self.box = None
         
     """
     Funcion que le permite al robot moverse aleatoreamente hasta encontrar una caja, entonces el robot cargara la caja y se movera a la posicion de apilado
@@ -57,7 +58,9 @@ class Stevedor(mesa.Agent):
             if self.pos not in box_limit:
                 position = self.model.grid.get_cell_list_contents([self.pos])
                 box = [obj for obj in position if isinstance(obj, Box)]
+                
                 if len(box) > 0:
+                    self.box = box[0]
                     self.carring = True
                     self.box_carried = self.random.choice(box)
                     #if self.piles == 5: #numero de cajas por stacks
@@ -68,16 +71,20 @@ class Stevedor(mesa.Agent):
     def stack(self):
         global piles
         global puntoX
+        global apocalipsis
         if piles==0:
             box_limit.append((puntoX,1))
         piles +=1
+        self.box.altura = piles
         #print(piles)
         self.carring = False
         #print(self.boxCount)
         self.boxCount +=1
         #print(self.boxCount)
-        print(str("holaaaa")+str(piles))
+        #print(str("holaaaa")+str(piles))
+        
         if piles == 5:
+            apocalipsis += 1
             piles=0 #numero de cajas
             #print(puntoX)
             puntoX += 1 #stacks
@@ -125,6 +132,7 @@ class Box(mesa.Agent):
     # Constructor para la creación de la Box. 
     def __init__(self,unique_id,model):
         super().__init__(unique_id, model)
+        self.altura = 1
 
 #-------------#
 #--- MODEL ---#
@@ -148,36 +156,43 @@ class CarringModel(Model):
         self.occupied=[]
         self.counter = 0
         d = (p*(width*height))/100
-    
-        # Creación de los Agentes
-        for i in range(X):
-            while True:
-                x = self.random.randrange(self.grid.width)
-                y = self.random.randrange(self.grid.height)
-                pos=(x,y)
-                if pos not in self.occupied:
-                    carr = Stevedor(self.next_id(),self)
-                    #print(str("agents") + str(carr.unique_id))
-                    #print(pos)
-                    self.schedule.add(carr)
-                    self.grid.place_agent(carr,(pos))
-                    self.occupied.append((pos))
-                    break
+        self.renacimiento = False
+
+        if apocalipsis == d:
+            self.renacimiento = True
             
-        # Colocación aleatoria de la Box. 
-        for i in range(round(d)):
-            while True:
-                x = self.random.randrange(self.grid.width)
-                y = self.random.randrange(self.grid.height)
-                pos=(x,y)
-                if pos not in self.occupied:
-                    boxes = Box(self.next_id(),self)
-                    #print(str("boxes") + str(boxes.unique_id))
-                    #print(pos)
-                    self.schedule.add(boxes)
-                    self.grid.place_agent(boxes,(pos))
-                    self.occupied.append((pos))
-                    break
+        else:
+            # Creación de los Agentes
+            for i in range(X):
+                while True:
+                    x = self.random.randrange(self.grid.width)
+                    y = self.random.randrange(self.grid.height)
+                    pos=(x,y)
+                    if pos not in self.occupied:
+                        carr = Stevedor(self.next_id(),self)
+                        #print(str("agents") + str(carr.unique_id))
+                        #print(pos)
+                        self.schedule.add(carr)
+                        self.grid.place_agent(carr,(pos))
+                        self.occupied.append((pos))
+                        break
+                
+            # Colocación aleatoria de la Box. 
+            for i in range(round(d)):
+                while True:
+                    x = self.random.randrange(self.grid.width)
+                    y = self.random.randrange(self.grid.height)
+                    pos=(x,y)
+                    if pos not in self.occupied:
+                        boxes = Box(self.next_id(),self)
+                        #print(str("boxes") + str(boxes.unique_id))
+                        #print(pos)
+                        self.schedule.add(boxes)
+                        self.grid.place_agent(boxes,(pos))
+                        self.occupied.append((pos))
+                        break
+                        
+       
 
     def step(self):
         self.schedule.step()

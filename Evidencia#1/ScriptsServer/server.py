@@ -50,9 +50,10 @@ def getBoxes():
         #boxPositions = [{"id": str(d.unique_id), "x": x, "y":1, "z":y} for (d, x, y) in carringModel.grid.coord_iter() if isinstance(d, Box)]
         boxPositions = []
         for(d,x, y) in carringModel.grid.coord_iter():
+
             for i in range(len(d)):
                 if isinstance(d[i], Box):
-                    boxPositions.append({"id": str(d[i].unique_id), "x": x, "y":1, "z":y})
+                    boxPositions.append({"id": str(d[i].unique_id), "x": x, "y":d[i].altura, "z":y})
         return jsonify({'positions':boxPositions})
 
 @app.route('/update', methods=['GET'])
@@ -61,7 +62,10 @@ def updateModel():
     if request.method == 'GET':
         carringModel.step()
         currentStep += 1
+        if carringModel.renacimiento:
+            return jsonify({'message':f'666'})
         return jsonify({'message':f'Model updated to step {currentStep}.', 'currentStep':currentStep})
+    
 
 if __name__=='__main__':
     app.run(host="localhost", port=8585, debug=True)

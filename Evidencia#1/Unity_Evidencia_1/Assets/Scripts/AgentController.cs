@@ -35,8 +35,8 @@ public class BoxData
         this.z = z;
     }
 }
-[Serializable]
 
+[Serializable]
 public class AgentsData
 {
     public List<AgentData> positions;
@@ -44,6 +44,12 @@ public class AgentsData
     public AgentsData() => this.positions = new List<AgentData>();
 }
 
+[Serializable]
+public class Rem
+{
+    public String message;
+
+}
 
 [Serializable]
 public class BoxesData
@@ -66,10 +72,11 @@ public class AgentController : MonoBehaviour
     string updateEndpoint = "/update";
     AgentsData agentsData;//--> cambios 211
     BoxesData boxesData;
+    Rem orden;
     Dictionary<string, GameObject> agents;
     //Dictionary<string, GameObject> boxes;
     Dictionary<string, Vector3> prevPositions, currPositions;
-    Dictionary<string, Vector3> boxInicial, boxFinal;
+    //Dictionary<string, Vector3> boxInicial, boxFinal;
 
     bool updatedBoxes = false, startedBoxes = false;
     bool updatedAgents = false, startedAgents = false;
@@ -143,8 +150,17 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else
         {
-            StartCoroutine(GetAgentsData());
-            StartCoroutine(GetBoxData());
+            Debug.Log(www.downloadHandler.text);
+            orden = JsonUtility.FromJson<Rem>(www.downloadHandler.text);
+            if (orden.message == "666"){
+                UnityEditor.EditorApplication.isPlaying = false;
+            }
+            else
+            { 
+                StartCoroutine(GetAgentsData());
+                StartCoroutine(GetBoxData());
+            }
+           
         }
     }
 
