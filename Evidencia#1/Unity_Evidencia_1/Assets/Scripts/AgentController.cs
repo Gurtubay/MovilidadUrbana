@@ -127,7 +127,6 @@ public class AgentController : MonoBehaviour
                 agents[agent.Key].transform.localPosition = interpolated;
                 if (direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction);
 
-                //aqui va algo de las cajas?
             }
 
             // float t = (timer / timeToUpdate);

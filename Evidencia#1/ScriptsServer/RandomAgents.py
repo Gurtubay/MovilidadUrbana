@@ -43,7 +43,6 @@ class Stevedor(mesa.Agent):
         #box_limit = [] #queria hacer una lista con las posiciones de los stacks para que no tomaran cajs de ahí
         
         
- 
     """
     Funcion que le permite al robot moverse aleatoreamente hasta encontrar una caja, entonces el robot cargara la caja y se movera a la posicion de apilado
     """
@@ -62,6 +61,7 @@ class Stevedor(mesa.Agent):
                     self.carring = True
                     self.box_carried = self.random.choice(box)
                     #if self.piles == 5: #numero de cajas por stacks
+
     """
     Funcion que cuenta la cantidad de cajas en una pila y determina cuando hay que hacer una nueva pila y en donde estara esta nueva pila, ademas de bloquear las cajas ya apiladas
     """
@@ -71,17 +71,18 @@ class Stevedor(mesa.Agent):
         if piles==0:
             box_limit.append((puntoX,1))
         piles +=1
-        print(piles)
+        #print(piles)
         self.carring = False
-        print(self.boxCount)
+        #print(self.boxCount)
         self.boxCount +=1
-        print(self.boxCount)
+        #print(self.boxCount)
+        print(str("holaaaa")+str(piles))
         if piles == 5:
             piles=0 #numero de cajas
-            print(puntoX)
+            #print(puntoX)
             puntoX += 1 #stacks
-            print(puntoX)
-
+            #print(puntoX)
+        
     """
     Funcion para que el robot se mueva a la poisicon de apilado actual
     """
@@ -133,6 +134,8 @@ class Box(mesa.Agent):
 Clase para definir el Modelo, asiganción de variables, creación de 1 o más Agentes. 
 Constructor del Modelo con las variables requeridas
 """
+
+
 class CarringModel(Model):
     def __init__(self,width,height,X,p,e):
         super().__init__()
@@ -143,8 +146,9 @@ class CarringModel(Model):
         self.currentsteps = 0
         self.maxsteps = e
         self.occupied=[]
+        self.counter = 0
         d = (p*(width*height))/100
-
+    
         # Creación de los Agentes
         for i in range(X):
             while True:
@@ -153,8 +157,8 @@ class CarringModel(Model):
                 pos=(x,y)
                 if pos not in self.occupied:
                     carr = Stevedor(self.next_id(),self)
-                    print(str("agents") + str(carr.unique_id))
-                    print(pos)
+                    #print(str("agents") + str(carr.unique_id))
+                    #print(pos)
                     self.schedule.add(carr)
                     self.grid.place_agent(carr,(pos))
                     self.occupied.append((pos))
@@ -168,15 +172,18 @@ class CarringModel(Model):
                 pos=(x,y)
                 if pos not in self.occupied:
                     boxes = Box(self.next_id(),self)
-                    print(str("boxes") + str(boxes.unique_id))
-                    print(pos)
+                    #print(str("boxes") + str(boxes.unique_id))
+                    #print(pos)
                     self.schedule.add(boxes)
                     self.grid.place_agent(boxes,(pos))
                     self.occupied.append((pos))
                     break
-    
+
     def step(self):
         self.schedule.step()
+        self.counter +=1
+        print(self.counter)
+        
 """
 
 #--------------#
