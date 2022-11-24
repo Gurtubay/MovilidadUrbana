@@ -1,0 +1,12 @@
+Pendientes.
+Objetivo: Que el vehiculo llegue a su destino
+
+Inconvenientes:
+1-Le va a hacer caso a los objetos del road
+2-Hay que enseñarle la mejor forma de llegar
+3-Los vehiculos van a chocar
+
+Soluciones: 
+Hacer simbolos nuevos para las intersecciones y cambios de carril
+Agregar sensores a los vehiculos para que conozcan lo que hay en las celdas adyacentes
+Agregar un if para que los vehiculos no choquen

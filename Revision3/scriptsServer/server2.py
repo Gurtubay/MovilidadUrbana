@@ -42,7 +42,7 @@ def agent_portrayal(agent):
 width = 0
 height = 0
 
-with open('Evidencia#2/scriptsServer/2022_base.txt',"r") as baseFile:
+with open('Revision3/scriptsServer/2022_base.txt',"r") as baseFile:
     lines = baseFile.readlines()
     width = len(lines[0])-1
     height = len(lines)

@@ -12,13 +12,13 @@ class RandomModel(Model):
     """
     def __init__(self, N):
 
-        dataDictionary = json.load(open("Evidencia#2/scriptsServer/mapDictionary.json"))
+        dataDictionary = json.load(open("Revision3/scriptsServer/mapDictionary.json"))
 
         self.destination_pos= []
 
         self.traffic_lights = []
 
-        with open('Evidencia#2/scriptsServer/2022_base.txt') as baseFile:
+        with open('Revision3/scriptsServer/2022_base.txt') as baseFile:
             lines = baseFile.readlines()
             self.width = len(lines[0])-1
             self.height = len(lines)
