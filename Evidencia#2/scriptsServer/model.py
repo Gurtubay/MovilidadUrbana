@@ -28,6 +28,9 @@ class RandomModel(Model):
 
             for r, row in enumerate(lines):
                 for c, col in enumerate(row):
+                    """
+                    Para las intersecciones generar simbolos nuevos y declararlos en el modelo y el txt 2022_base y en el json
+                    """
                     if col in ["v", "^", ">", "<"]:
                         agent = Road(f"r_{r*self.width+c}", self, dataDictionary[col])
                         self.grid.place_agent(agent, (c, self.height - r - 1))

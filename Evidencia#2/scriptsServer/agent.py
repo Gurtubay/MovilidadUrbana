@@ -18,7 +18,7 @@ class Car(Agent):
         super().__init__(unique_id, model)
         self.destination = des
         self.lastDirection = "Left"
-
+        #self.knowledge1=[(pos),obj] <- SENSORES
 
     def move(self):
         """ 
