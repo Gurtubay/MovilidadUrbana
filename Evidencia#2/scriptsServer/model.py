@@ -12,11 +12,13 @@ class RandomModel(Model):
     """
     def __init__(self, N):
 
-        dataDictionary = json.load(open("mapDictionary.json"))
+        dataDictionary = json.load(open("Evidencia#2/scriptsServer/mapDictionary.json"))
+
+        self.destination_pos= []
 
         self.traffic_lights = []
 
-        with open('2022_base.txt') as baseFile:
+        with open('Evidencia#2/scriptsServer/2022_base.txt') as baseFile:
             lines = baseFile.readlines()
             self.width = len(lines[0])-1
             self.height = len(lines)
@@ -43,8 +45,15 @@ class RandomModel(Model):
                     elif col == "D":
                         agent = Destination(f"d_{r*self.width+c}", self)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
+                        self.destination_pos.append((c,self.height - r - 1))
 
         self.num_agents = N
+        for i in range (1) :
+            pos = (0,0)
+            destination = random.choice(self.destination_pos)
+            car = Car(self.next_id,self, destination)
+            self.schedule.add(car)
+            self.grid.place_agent(car,(pos))
         self.running = True
 
     def step(self):

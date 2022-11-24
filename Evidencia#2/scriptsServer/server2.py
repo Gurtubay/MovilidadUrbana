@@ -14,7 +14,11 @@ def agent_portrayal(agent):
                  }
 
     if (isinstance(agent, Road)):
-        portrayal["Color"] = "grey"
+        portrayal["Color"] = "white"
+        portrayal["Layer"] = 0
+    
+    if (isinstance(agent, Car)):
+        portrayal["Color"] = "blue"
         portrayal["Layer"] = 0
     
     if (isinstance(agent, Destination)):
@@ -28,7 +32,7 @@ def agent_portrayal(agent):
         portrayal["h"] = 0.8
 
     if (isinstance(agent, Obstacle)):
-        portrayal["Color"] = "cadetblue"
+        portrayal["Color"] = "Black"
         portrayal["Layer"] = 0
         portrayal["w"] = 0.8
         portrayal["h"] = 0.8
@@ -38,7 +42,7 @@ def agent_portrayal(agent):
 width = 0
 height = 0
 
-with open('2022_base.txt') as baseFile:
+with open('Evidencia#2/scriptsServer/2022_base.txt',"r") as baseFile:
     lines = baseFile.readlines()
     width = len(lines[0])-1
     height = len(lines)
