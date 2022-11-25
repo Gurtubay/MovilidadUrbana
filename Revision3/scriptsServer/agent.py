@@ -52,7 +52,7 @@ class Car(Agent):
             elif self.lastDirection=="Down" and goOrStop[0].state:
                 self.model.grid.move_agent(self,(x0,y0-1))
 
-            """
+        """
         if x0 != xf:
             direccion = -1 if xf - x0 < 0 else 1 #direccion
             self.model.grid.move_agent(self,(x0 + direccion,y0))
