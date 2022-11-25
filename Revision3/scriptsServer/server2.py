@@ -14,7 +14,7 @@ def agent_portrayal(agent):
                  }
 
     if (isinstance(agent, Road)):
-        portrayal["Color"] = "white"
+        portrayal["Color"] = "gray"
         portrayal["Layer"] = 0
     
     if (isinstance(agent, Car)):
@@ -32,7 +32,7 @@ def agent_portrayal(agent):
         portrayal["h"] = 0.8
 
     if (isinstance(agent, Obstacle)):
-        portrayal["Color"] = "Black"
+        portrayal["Color"] = "purple"
         portrayal["Layer"] = 0
         portrayal["w"] = 0.8
         portrayal["h"] = 0.8

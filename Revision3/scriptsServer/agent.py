@@ -30,6 +30,7 @@ class Car(Agent):
         direccionRoad=[obj for obj in position if isinstance(obj,Road)]
         goOrStop=[obj for obj in position if isinstance(obj,Traffic_Light)]
         if len(direccionRoad)>0:
+            #Direcciones para Left,Right,Up y Down
             if direccionRoad[0].direction=="Left":
                 self.model.grid.move_agent(self,(x0-1,y0))
                 self.lastDirection="Left"
@@ -42,7 +43,22 @@ class Car(Agent):
             elif direccionRoad[0].direction=="Down":
                 self.model.grid.move_agent(self,(x0,y0-1))
                 self.lastDirection="Down"
+            #Dirreciones para UpLeft, UpRight, DownLeft, DownRight: 
+            elif direccionRoad[0].direction=="UpLeft":
+                self.model.grid.move_agent(self,(x0-1,y0+1))
+                self.lastDirection="UpLeft"
+            elif direccionRoad[0].direction=="UpRight":
+                self.model.grid.move_agent(self,(x0+1,y0+1))
+                self.lastDirection="UpRight"
+            elif direccionRoad[0].direction=="DownLeft":
+                self.model.grid.move_agent(self,(x0-1,y0-1))
+                self.lastDirection="DownLeft"
+            elif direccionRoad[0].direction=="DownRight":
+                self.model.grid.move_agent(self,(x0+1,y0-1))
+                self.lastDirection="DownRight"
+
         else:
+            #LastDir para Left, Right, Up, Down
             if self.lastDirection=="Left" and goOrStop[0].state:
                 self.model.grid.move_agent(self,(x0-1,y0))
             elif self.lastDirection=="Right" and goOrStop[0].state:
@@ -51,6 +67,15 @@ class Car(Agent):
                 self.model.grid.move_agent(self,(x0,y0+1))
             elif self.lastDirection=="Down" and goOrStop[0].state:
                 self.model.grid.move_agent(self,(x0,y0-1))
+            #LastDir para UpLeft, UpRight, DownLeft, DownRight
+            elif self.lastDirection=="UpLeft" and goOrStop[0].state:
+                self.model.grid.move_agent(self,(x0-1,y0+1))
+            elif self.lastDirection=="UpRight" and goOrStop[0].state:
+                self.model.grid.move_agent(self,(x0+1,y0+1))
+            elif self.lastDirection=="DownLeft" and goOrStop[0].state:
+                self.model.grid.move_agent(self,(x0-1,y0-1))
+            elif self.lastDirection=="DownRight" and goOrStop[0].state:
+                self.model.grid.move_agent(self,(x0+1,y0-1))
 
         """
         if x0 != xf:
