@@ -332,9 +332,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layout: {fileID: 4900000, guid: 1bd49f2e04cdbec48bb774669bd2140d, type: 3}
   roadPrefab: {fileID: 3240343348373693069, guid: 646fc54ff3078ce94bbdbd0f0d4c4a05, type: 3}
-  buildingPrefab: {fileID: 1212380520111254, guid: 562df8355904213468a690c4ce6740b6, type: 3}
-  obstaclePrefab: {fileID: 33555395739272859, guid: 10a584233fb38a918af771ddce837268, type: 3}
+  obstaclePrefab: {fileID: 1212380520111254, guid: 562df8355904213468a690c4ce6740b6, type: 3}
+  destinationPrefab: {fileID: 466902165752306224, guid: ba7d5275d44843e43ab33b8efdd2e707, type: 3}
   semaphorePrefab: {fileID: 1244092711701336, guid: 723ced9a1fcf7aa48acb0db6309b7b0f, type: 3}
+  floorPrefab: {fileID: 1247173097211460, guid: 58c82ce0260d48d409299732c6345af2, type: 3}
   tileSize: 1
 --- !u!4 &1457529884
 Transform:
