@@ -90,12 +90,13 @@ class RandomModel(Model):
         rutas=Grafo()
         listaRoad=[]
         listaIntersecciones=[]
+        super().__init__()
         dataDictionary = json.load(open("mapDictionary.json"))
 
         self.destination_pos= []
 
         self.traffic_lights = []
-
+        self.occupied=[]
         with open('2022_base.txt') as baseFile:
             lines = baseFile.readlines()
             self.width = len(lines[0])-1
@@ -238,10 +239,10 @@ class RandomModel(Model):
                                     elif (listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso) in self.destination_pos:
                                         rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
                                         
-                                    elif (listaRoad[g][0][0]+2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso),"Up"] in listaRoad:
+                                    elif (listaRoad[g][0][0]+2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso),"Down"] in listaRoad:
                                         rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
                                         
-                                    elif (listaRoad[g][0][0]-2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso),"Up"] in listaRoad:
+                                    elif (listaRoad[g][0][0]-2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso),"Down"] in listaRoad:
                                         rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
                                 else:
                                     break
@@ -318,12 +319,25 @@ class RandomModel(Model):
             
         print(rutas.imprimir_matriz(rutas.matriz))    
         self.num_agents = N
-        for i in range (1) :
+        listaWaze=[]
+        for i in range(N) :
             pos = (0,0)
+            pos_1 = (0,23)
+            pos_5 = (1,23)
+            pos_2 = (23,0)
+            pos_6 = (23,1)
+            pos_3 = (23,23)
+            pos_7 = (23,24)
+            position = [pos, pos_1, pos_2, pos_3, pos_5, pos_6, pos_7]
             destination = random.choice(self.destination_pos)
-            car = Car(self.next_id,self, destination,rutas)
-            self.schedule.add(car)
-            self.grid.place_agent(car,(pos))
+            if pos not in self.occupied:
+                car = Car(self.next_id(),self, destination,rutas)
+                self.schedule.add(car)
+                self.grid.place_agent(car,random.choice(position))
+                self.occupied.append((position))
+                print(str("id carro ") + str(car))
+                print(str("destino") + str(destination) + str(car))
+                #break
         self.running = True
 
     def step(self):
