@@ -4,80 +4,89 @@ from mesa.space import MultiGrid
 from agent import *
 import json
 import math
-
-class Grafo:
+class Vertice:
+    """Clase que define los vertices de los grafos"""
+    def __init__(self,i):
+        self.id=i
+        self.vecinos=[]
+        self.visitado=False
+        self.padre=None
+        self.distancia=float('inf')
+    
+    def agregarVecino(self,v,p):
+        if v not in self.vecinos:
+            self.vecinos.append([v,p])
+    
+class Grafica:
+    """Clase que define los vertices de las graficas"""
     def __init__(self):
-        self.vertices = []
-        self.matriz = [[None]*0 for i in range(0)]
-
-    def imprimir_matriz(self, m):
-        cadena = ""
-
-        for c in range(len(m)):
-            cadena += "\t" + str(self.vertices[c])
-
-        cadena += "\n " + ("         -" * len(m))
-
-        for f in range(len(m)):
-            cadena += "\n" + str(self.vertices[f]) + " |"
-            for c in range(len(m)):
-                if f == c and (m[f][c] is None or m[f][c] == 0):
-                        cadena += "\t" + "\\"
-                else:
-                    if f == c and (m[f][c] is None or m[f][c] == 0):
-                        cadena += "\t" + "\\"
-                    else:
-                        if m[f][c] is None or math.isinf(m[f][c]):
-                            cadena += "\t" + "X"
-                        else:
-                            cadena += "\t" + str(m[f][c])
-
-        cadena += "\n"
-        print(cadena)
-
-    @staticmethod
-    def contenido_en(lista, k):
-        if lista.count(k) == 0:
+        self.vertices={}
+        self.listaVertices=[]
+    
+    def agregarVertice(self,id):
+        if id not in self.vertices:
+            self.vertices[id]=Vertice(id)
+            self.listaVertices.append(id)
+    
+    def agregarArista(self,a,b,p):
+        if a in self.vertices and b in self.vertices:
+            self.vertices[a].agregarVecino(b,p)
+            self.vertices[b].agregarVecino(a,p)
+            print("Vertice inicial: " + str(a))
+            print("Vertice Final: " + str(b))
+            print("Peso: " + str(p))
+            
+            
+        
+    def imprimirGrafica(self):
+        for v in self.vertices:
+            print("La distancia del vertice "+str(v)+" es "+ str(self.vertices[v].distancia)+" llegando desde "+str(self.vertices[v].padre))
+            
+    def camino(self,a,b):
+        camino=[]
+        actual=b
+        while actual != None:
+            camino.insert(0,actual)
+            actual=self.vertices[actual].padre
+        return [camino, self.vertices[b].distancia]
+    
+    def minimo(self,lista):
+        if len(lista)>0:
+            m= self.vertices[lista[0]].distancia
+            v=lista[0]
+            for e in lista:
+                if m > self.vertices[e].distancia:
+                    m=self.vertices[e].distancia
+                    v=e
+            return v
+            
+    def dijkstra(self,a):
+        if a in self.vertices:
+            self.vertices[a].distancia=0
+            actual = a
+            noVisitados=[]
+            
+            for v in self.vertices:
+                if v != a:
+                    self.vertices[v].distancia=float('inf')
+                self.vertices[v].padre=None
+                noVisitados.append(v)
+            
+            while len(noVisitados)>0:
+                for vecino in self.vertices[actual].vecinos:
+                    if self.vertices[vecino[0]].visitado==False:
+                        if self.vertices[actual].distancia+vecino[1] < self.vertices[vecino[0]].distancia:
+                            self.vertices[vecino[0]].distancia=self.vertices[actual].distancia+vecino[1]
+                            self.vertices[vecino[0]].padre=actual
+                
+                self.vertices[actual].visitado==True
+                noVisitados.remove(actual)
+                
+                actual =self.minimo(noVisitados)
+            
+        else:
             return False
-        return True
 
-    def esta_en_vertices(self, v):
-        if self.vertices.count(v) == 0:
-            return False
-        return True
-
-    def agregar_vertices(self, v):
-        if self.esta_en_vertices(v):
-            return False
-        # Si no esta contenido.
-        self.vertices.append(v)
-
-        # Redimensiono la matriz de adyacencia.
-        # Para preparalarla para agregar más Aristas.
-        filas = columnas = len(self.matriz)
-        matriz_aux = [[None] * (filas+1) for i in range(columnas+1)]
-
-        # Recorro la matriz y copio su contenido dentro de la matriz más grande.
-        for f in range(filas):
-            for c in range(columnas):
-                matriz_aux[f][c] = self.matriz[f][c]
-
-        # Igualo la matriz a la matriz más grande.
-        self.matriz = matriz_aux
-        return True
-
-    def agregar_arista(self, inicio, fin, valor, dirijida):
-        if not(self.esta_en_vertices(inicio)) or not(self.esta_en_vertices(fin)):
-            return False
-        # Si estan contenidos en la lista de vertices.
-        self.matriz[self.vertices.index(inicio)][self.vertices.index(fin)] = valor
-
-        # Si la arista entrante no es dirijida.
-        # Instancio una Arista en sentido contrario de Fin a Inicio.
-        if not dirijida:
-            self.matriz[self.vertices.index(fin)][self.vertices.index(inicio)] = valor
-        return True
-   
 class RandomModel(Model):
     """ 
     Creates a new model with random agents.
@@ -87,7 +96,8 @@ class RandomModel(Model):
     def __init__(self, N):
         
         #rutas = Grafo(self.next_id,self)
-        rutas=Grafo()
+        #rutas=Grafo()
+        rutas=Grafica()
         listaRoad=[]
         listaIntersecciones=[]
         super().__init__()
@@ -115,7 +125,7 @@ class RandomModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         listaRoad.append([agent.pos, agent.direction])
                         if col in ["$","&","%","*"]:
-                            rutas.agregar_vertices((c, self.height - r - 1))
+                            rutas.agregarVertice((c, self.height - r - 1))
                             listaIntersecciones.append(dataDictionary[col])
                         
                     elif col in ["S", "s"]:
@@ -132,192 +142,253 @@ class RandomModel(Model):
                         agent = Destination(f"d_{r*self.width+c}", self)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.destination_pos.append((c,self.height - r - 1))
-                        rutas.agregar_vertices((c, self.height - r - 1))
+                        rutas.agregarVertice((c, self.height - r - 1))
                         listaIntersecciones.append("Destination")
                     
         ##rutas.imprimir_matriz(rutas.matriz)
         peso=1
         misVertices=0
         
-        for i in range(len(rutas.vertices)):
+        for i in range(len(rutas.listaVertices)):
             for g in range(len(listaRoad)):
-                if listaRoad[g][0][0]==rutas.vertices[misVertices][0]+1 or listaRoad[g][0][0]==rutas.vertices[misVertices][0]-1 or listaRoad[g][0][1]==rutas.vertices[misVertices][1]+1 or listaRoad[g][0][1]==rutas.vertices[misVertices][1]-1:
-                    if listaIntersecciones[misVertices]=="UpLeft":
-                        if listaRoad[g][1]<"Up":
+                #if (listaRoad[g][0][0]==rutas.listaVertices[misVertices][0]+1 and listaRoad[g][0][1]==rutas.listaVertices[misVertices][1]) or (listaRoad[g][0][0]==rutas.listaVertices[misVertices][0]-1 and listaRoad[g][0][1]==rutas.listaVertices[misVertices][1]) or (listaRoad[g][0][0]==rutas.listaVertices[misVertices][0] and listaRoad[g][0][1]==rutas.listaVertices[misVertices][1]+1) or (listaRoad[g][0][0]==rutas.listaVertices[misVertices][0] and listaRoad[g][0][1]==rutas.listaVertices[misVertices][1]-1):
+                if listaIntersecciones[misVertices]=="UpLeft":
+                    if listaRoad[g][0][0]==rutas.listaVertices[misVertices][0] or listaRoad[g][0][1]==rutas.listaVertices[misVertices][1]:    
+                        if listaRoad[g][1]=="Up":
                             while True:
                                 if [(listaRoad[g][0][0],listaRoad[g][0][1]+peso),"Up"] in listaRoad:
                                     peso+=1
                                     if (listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1)
                                         
                                     elif (listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1)
                                         
                                     elif (listaRoad[g][0][0]+2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso),"Up"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2)
                                         
                                     elif (listaRoad[g][0][0]-2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso),"Up"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2)
+
                                 else:
                                     break
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             peso=1
-                        elif listaRoad[g][1]<"Left":
+                        elif listaRoad[g][1]=="Left":
                             while True:
                                 if [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]),"Left"] in listaRoad:
                                     peso+=1
                                     if (listaRoad[g][0][0],listaRoad[g][0][1]+1) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+1),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+1),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]+1),peso+1)
                                         
                                     elif (listaRoad[g][0][0],listaRoad[g][0][1]-1) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-1),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-1),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]-1),peso+1)
                                         
                                     elif (listaRoad[g][0][0],listaRoad[g][0][1]+2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]+1),"Left"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+2),peso+2,True)
-                                        
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]+2),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]+2),peso+2)
+
                                     elif (listaRoad[g][0][0],listaRoad[g][0][1]-2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]-1),"Left"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-2),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-2),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]-2),peso+2)
+
                                 else:
                                     break
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             peso=1
-                        elif listaRoad[g][1]<"UpLeft":
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
-                    
-                    elif listaIntersecciones[misVertices]=="UpRight":
-                        if listaRoad[g][1]<"Up":
+                        elif listaRoad[g][1]=="UpLeft":
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
+                
+                elif listaIntersecciones[misVertices]=="UpRight":
+                    if listaRoad[g][0][0]==rutas.listaVertices[misVertices][0] or listaRoad[g][0][1]==rutas.listaVertices[misVertices][1]:    
+                        if listaRoad[g][1]=="Up":
                             while True:
                                 if [(listaRoad[g][0][0],listaRoad[g][0][1]+peso),"Up"] in listaRoad:
                                     peso+=1
                                     if (listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1)
+
                                         
                                     elif (listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1)
+
                                         
                                     elif (listaRoad[g][0][0]+2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso),"Up"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2)
                                         
                                     elif (listaRoad[g][0][0]-2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso),"Up"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2)
                                 else:
                                     break
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             peso=1
                             
-                        elif listaRoad[g][1]<"Right":
+                        elif listaRoad[g][1]=="Right":
                             while True:
                                 if [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]),"Right"] in listaRoad:
                                     peso+=1
                                     if (listaRoad[g][0][0],listaRoad[g][0][1]+1) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+1),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+1),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]+1),peso+1)
                                         
                                     elif (listaRoad[g][0][0],listaRoad[g][0][1]-1) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-1),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-1),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]-1),peso+1)
                                         
-                                    elif (listaRoad[g][0][0],listaRoad[g][0][1]+2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]+1),"Left"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+2),peso+2,True)
+                                    elif (listaRoad[g][0][0],listaRoad[g][0][1]+2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]+1),"Right"] in listaRoad:
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+2),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]+2),peso+2)
                                         
-                                    elif (listaRoad[g][0][0],listaRoad[g][0][1]-2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]-1),"Left"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-2),peso+2,True)
+                                    elif (listaRoad[g][0][0],listaRoad[g][0][1]-2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]-1),"Right"] in listaRoad:
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-2),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]-2),peso+2)
                                 else:
                                     break
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             peso=1
                             
-                        elif listaRoad[g][1]<"UpRight":
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
-                            
-                    elif listaIntersecciones[misVertices]=="DownLeft":
-                        if listaRoad[g][1]<"Down":
+                        elif listaRoad[g][1]=="UpRight":
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
+                        
+                elif listaIntersecciones[misVertices]=="DownLeft":
+                    if listaRoad[g][0][0]==rutas.listaVertices[misVertices][0] or listaRoad[g][0][1]==rutas.listaVertices[misVertices][1]:    
+                        if listaRoad[g][1]=="Down":
                             while True:
                                 if [(listaRoad[g][0][0],listaRoad[g][0][1]+peso),"Down"] in listaRoad:
                                     peso+=1
                                     if (listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1)
                                         
                                     elif (listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1)
                                         
                                     elif (listaRoad[g][0][0]+2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso),"Down"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2)
                                         
                                     elif (listaRoad[g][0][0]-2,listaRoad[g][0][1]+peso) in self.destination_pos and [(listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso),"Down"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2)
+                                        
                                 else:
                                     break
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             peso =1
                             
-                        elif listaRoad[g][1]<"Left":
+                        elif listaRoad[g][1]=="Left":
                             while True:
                                 if [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]),"Left"] in listaRoad:
                                     peso+=1
                                     if (listaRoad[g][0][0],listaRoad[g][0][1]+1) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+1),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+1),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]+1),peso+1)
                                         
                                     elif (listaRoad[g][0][0],listaRoad[g][0][1]-1) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-1),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-1),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]-1),peso+1)
                                         
                                     elif (listaRoad[g][0][0],listaRoad[g][0][1]+2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]+1),"Left"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+2),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+2),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+2),peso+2)
                                         
                                     elif (listaRoad[g][0][0],listaRoad[g][0][1]-2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]-1),"Left"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-2),peso+2,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-2),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]-2),peso+2)
+                                        
                                 else:
                                     break
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             peso=1
                             
-                        elif listaRoad[g][1]<"DownLeft":
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                        elif listaRoad[g][1]=="DownLeft":
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             
-                    elif listaIntersecciones[misVertices]=="DownRight":
-                        if listaRoad[g][1]<"Down":
+                elif listaIntersecciones[misVertices]=="DownRight":
+                    if listaRoad[g][0][0]==rutas.listaVertices[misVertices][0] or listaRoad[g][0][1]==rutas.listaVertices[misVertices][1]:    
+                        if listaRoad[g][1]=="Down":
                             while True:
                                 if [(listaRoad[g][0][0],listaRoad[g][0][1]+peso),"Down"] in listaRoad:
                                     peso+=1
                                     if [(listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso)] in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1,True)
-                                        
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+1,listaRoad[g][0][1]),peso+1)
+
                                     elif [(listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso)] in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-1,listaRoad[g][0][1]),peso+1)
                                         
-                                    elif [(listaRoad[g][0][0]+2,listaRoad[g][0][1]+peso)] in self.destination_pos and [(listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso),"Up"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
+                                    elif [(listaRoad[g][0][0]+2,listaRoad[g][0][1]+peso)] in self.destination_pos and [(listaRoad[g][0][0]+1,listaRoad[g][0][1]+peso),"Down"] in listaRoad:
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2,True)
+                                        rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]+2,listaRoad[g][0][1]),peso+2)
                                         
-                                    elif [(listaRoad[g][0][0]-2,listaRoad[g][0][1]+peso)] in self.destination_pos and [(listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso),"Up"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
+                                    elif [(listaRoad[g][0][0]-2,listaRoad[g][0][1]+peso)] in self.destination_pos and [(listaRoad[g][0][0]-1,listaRoad[g][0][1]+peso),"Down"] in listaRoad:
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0]-2,listaRoad[g][0][1]),peso+2)
+                                        
                                 else:
                                     break
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             peso =1
                             
-                        elif listaRoad[g][1]<"Right":
+                        elif listaRoad[g][1]=="Right":
                             while True:
                                 if [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]),"Right"] in listaRoad:
                                     peso+=1
                                     if (listaRoad[g][0][0],listaRoad[g][0][1]+1) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+1),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+1),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]+1),peso+1)
                                         
                                     elif (listaRoad[g][0][0],listaRoad[g][0][1]-1) in self.destination_pos:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-1),peso+1,True)
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-1),peso+1,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]-1),peso+1)
                                         
-                                    elif (listaRoad[g][0][0],listaRoad[g][0][1]+2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]+1),"Left"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+2),peso+2,True)
+                                    elif (listaRoad[g][0][0],listaRoad[g][0][1]+2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]+1),"Right"] in listaRoad:
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]+2),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]+2),peso+2)
                                         
-                                    elif (listaRoad[g][0][0],listaRoad[g][0][1]-2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]-1),"Left"] in listaRoad:
-                                        rutas.agregar_arista(rutas.vertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-2),peso+2,True)
+                                    elif (listaRoad[g][0][0],listaRoad[g][0][1]-2) in self.destination_pos and [(listaRoad[g][0][0]-peso,listaRoad[g][0][1]-1),"Right"] in listaRoad:
+                                        #rutas.agregar_arista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][1]-2),peso+2,True)
+                                        rutas.agregarArista(rutas.listaVertices[misVertices],(listaRoad[g][0][0],listaRoad[g][0][1]-2),peso+2)
+                                        
                                 else:
                                     break
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
                             peso=1
                             
-                        elif listaRoad[g][1]<"DownRight":
-                            rutas.agregar_arista(rutas.vertices[misVertices],listaRoad[g][0],peso,True)
+                        elif listaRoad[g][1]=="DownRight":
+                            #rutas.agregar_arista(rutas.listaVertices[misVertices],listaRoad[g][0],peso,True)
+                            rutas.agregarArista(rutas.listaVertices[misVertices],listaRoad[g][0],peso)
             misVertices +=1
-            
-        print(rutas.imprimir_matriz(rutas.matriz))    
+        print(rutas.listaVertices)
+        print("\n\nLa ruta mas rapida por Dijkstra junto con su costo es:")
+        rutas.dijkstra((0,0))
+        print(rutas.camino((0,0),(5,4)))
+        print("\nLos valores finales de la grafica son los siguientes:")
+        rutas.imprimirGrafica()           
+        #print(rutas.imprimir_matriz(rutas.matriz))    
         self.num_agents = N
         listaWaze=[]
         for i in range(N) :
