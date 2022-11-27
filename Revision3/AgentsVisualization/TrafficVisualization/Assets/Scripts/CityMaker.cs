@@ -7,6 +7,7 @@ public class CityMaker : MonoBehaviour
     [SerializeField] TextAsset layout;
     [SerializeField] GameObject roadPrefab;
     [SerializeField] GameObject buildingPrefab;
+    [SerializeField] GameObject obstaclePrefab;
     [SerializeField] GameObject semaphorePrefab;
     [SerializeField] int tileSize;
 
