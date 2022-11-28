@@ -402,7 +402,7 @@ class RandomModel(Model):
             position = [pos, pos_1, pos_2, pos_3, pos_5, pos_6, pos_7]
             destination = random.choice(self.destination_pos)
             if pos not in self.occupied:
-                car = Car(self.next_id(),self, destination,rutas)
+                car = Car(self.next_id(),self, destination, rutas)
                 self.schedule.add(car)
                 self.grid.place_agent(car,random.choice(position))
                 self.occupied.append((position))

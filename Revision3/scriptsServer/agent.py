@@ -8,7 +8,7 @@ class Car(Agent):
         unique_id: Agent's ID 
         direction: Randomly chosen direction chosen from one of eight directions
     """
-    def __init__(self, unique_id, model,des):
+    def __init__(self, unique_id, model,des, rutas):
         """
         Creates a new random agent.
         Args:
@@ -18,6 +18,7 @@ class Car(Agent):
         super().__init__(unique_id, model)
         self.destination = des
         self.lastDirection = "Left"
+        self.rutas = rutas
         #self.knowledge1=[(pos),obj] <- SENSORES
 
     def move(self):
