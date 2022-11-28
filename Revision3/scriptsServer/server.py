@@ -8,8 +8,8 @@ from agent import *
 
 # Size of the board:
 number_agents = 10
-width = 28
-height = 28
+width = 24
+height = 25
 randomModel = None
 currentStep = 0
 
@@ -46,6 +46,7 @@ def getAgents():
                     agentPositions.append({"id": str(N[i].unique_id), "x": x, "y":1, "z":y})
 
         return jsonify({'positions':agentPositions})
+
 """
 @app.route('/getObstacles', methods=['GET'])
 def getObstacles():
