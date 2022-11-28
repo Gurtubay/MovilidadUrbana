@@ -10,7 +10,7 @@ public class CityMaker : MonoBehaviour
     [SerializeField] GameObject destinationPrefab;
     [SerializeField] GameObject semaphorePrefab;
     [SerializeField] GameObject floorPrefab;
-    [SerializeField] GameObject vehiclePrefab;
+    //[SerializeField] GameObject vehiclePrefab;
     [SerializeField] int tileSize;
 
     // Start is called before the first frame update

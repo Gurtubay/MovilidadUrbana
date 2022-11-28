@@ -3,7 +3,8 @@
 # Octavio Navarro. October 2021
 
 from flask import Flask, request, jsonify
-from RandomAgents import *
+from model import *
+from agent import *
 
 # Size of the board:
 number_agents = 10
@@ -18,17 +19,17 @@ app = Flask("Traffic example")
 
 @app.route('/init', methods=['POST', 'GET'])
 def initModel():
-    global currentStep, randomModel, number_agents, width, height
+    global currentStep, randomModel, number_agents
 
     if request.method == 'POST':
         number_agents = int(request.form.get('NAgents'))
-        width = int(request.form.get('width'))
-        height = int(request.form.get('height'))
         currentStep = 0
 
         print(request.form)
-        print(number_agents, width, height)
-        randomModel = RandomModel(number_agents, width, height)
+        print(number_agents)
+        randomModel = RandomModel(number_agents)
+        print(f"width :{randomModel.width}")
+        print(f"height :{randomModel.height}" )
 
         return jsonify({"message":"Parameters recieved, model initiated."})
 
@@ -37,10 +38,15 @@ def getAgents():
     global randomModel
 
     if request.method == 'GET':
-        agentPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":z} for (a, x, z) in randomModel.grid.coord_iter() if isinstance(a, RandomAgent)]
+    #agentPositions = [{"id": str(X.unique_id), "x": x, "y":1, "z":y} for (X, x,y) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
+        agentPositions = []
+        for(N,x, y) in randomModel.grid.coord_iter():
+            for i in range(len(N)):
+                if isinstance(N[i], Car):
+                    agentPositions.append({"id": str(N[i].unique_id), "x": x, "y":1, "z":y})
 
         return jsonify({'positions':agentPositions})
-
+"""
 @app.route('/getObstacles', methods=['GET'])
 def getObstacles():
     global randomModel
@@ -49,7 +55,7 @@ def getObstacles():
         carPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":z} for (a, x, z) in randomModel.grid.coord_iter() if isinstance(a, ObstacleAgent)]
 
         return jsonify({'positions':carPositions})
-
+"""
 @app.route('/update', methods=['GET'])
 def updateModel():
     global currentStep, randomModel

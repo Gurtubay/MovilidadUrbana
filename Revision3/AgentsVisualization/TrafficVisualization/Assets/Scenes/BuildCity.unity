@@ -301,6 +301,56 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &994314421
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 994314423}
+  - component: {fileID: 994314422}
+  m_Layer: 0
+  m_Name: Carro
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &994314422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994314421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 983bc179e80f15347a79dd7b044746e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentPrefab: {fileID: 8631590404560204573, guid: 0420f394461dea74fb1eb500f843edc9, type: 3}
+  floor: {fileID: 1457529882}
+  NAgents: 4
+  width: 24
+  height: 25
+  timeToUpdate: 5
+--- !u!4 &994314423
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994314421}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.12636612, z: -0.0017794073}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1457529882
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,7 +386,6 @@ MonoBehaviour:
   destinationPrefab: {fileID: 466902165752306224, guid: ba7d5275d44843e43ab33b8efdd2e707, type: 3}
   semaphorePrefab: {fileID: 1244092711701336, guid: 723ced9a1fcf7aa48acb0db6309b7b0f, type: 3}
   floorPrefab: {fileID: 1247173097211460, guid: 58c82ce0260d48d409299732c6345af2, type: 3}
-  vehiclePrefab: {fileID: 993549348249905, guid: 563375cb179ab4d4d8c0ce2bfc651964, type: 3}
   tileSize: 1
 --- !u!4 &1457529884
 Transform:

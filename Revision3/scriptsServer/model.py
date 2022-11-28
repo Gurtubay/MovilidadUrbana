@@ -111,7 +111,8 @@ class RandomModel(Model):
             lines = baseFile.readlines()
             self.width = len(lines[0])-1
             self.height = len(lines)
-
+            print(f"width :{self.width}")
+            print(f"height :{self.height}" )
             self.grid = MultiGrid(self.width, self.height, torus = False) 
             self.schedule = RandomActivation(self)
 
