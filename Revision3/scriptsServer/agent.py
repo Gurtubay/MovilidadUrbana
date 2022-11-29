@@ -27,9 +27,15 @@ class Car(Agent):
         """ 
         x0,y0 = self.pos
         xf,yf = self.destination
-        position =self.model.grid.get_cell_list_contents([self.pos])
-        direccionRoad=[obj for obj in position if isinstance(obj,Road)]
-        goOrStop=[obj for obj in position if isinstance(obj,Traffic_Light)]
+        possible_steps = self.model.grid.get_neighborhood(self.pos, True, True)
+        #evitar que los coches se encimen unos con los otros
+        if possible_steps:
+            print(f"posible steps{possible_steps}")
+            #chosen_step = self.random.choice(possible_steps)
+            position =self.model.grid.get_cell_list_contents([self.pos])
+            direccionRoad=[obj for obj in position if isinstance(obj,Road)]
+            goOrStop=[obj for obj in position if isinstance(obj,Traffic_Light)]
+
         if len(direccionRoad)>0:
             #Direcciones para Left,Right,Up y Down
             if direccionRoad[0].direction=="Left":
@@ -92,6 +98,10 @@ class Car(Agent):
        
         self.model.grid.move_agent(self)
         """
+    def choque(self):
+        a = 0
+        #if self.pos == next_agent.pos:
+            #
 
     def step(self):
         """ 
