@@ -139,10 +139,10 @@ class RandomModel(Model):
                     if col in ["v", "^", ">", "<","$","&","%","*"]:
                         agent = Road(f"r_{r*self.width+c}", self, dataDictionary[col])
                         self.grid.place_agent(agent, (c, self.height - r - 1))
-                        listaRoad.append([agent.pos, agent.direction])
+                        listRoad.append([agent.pos, agent.direction])
                         if col in ["$","&","%","*"]:
                             rutas.agregarVertice((c, self.height - r - 1))
-                            listaIntersecciones.append(dataDictionary[col])
+                            listInt.append(dataDictionary[col])
                         
                     elif col in ["S", "s"]:
                         agent = Traffic_Light(f"tl_{r*self.width+c}", self, False if col == "S" else True, int(dataDictionary[col]))
@@ -159,7 +159,7 @@ class RandomModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.destination_pos.append((c,self.height - r - 1))
                         rutas.agregarVertice((c, self.height - r - 1))
-                        listaIntersecciones.append("Destination")
+                        listInt.append("Destination")
                     
         #Lista nombre Intersecciones listInt
 
