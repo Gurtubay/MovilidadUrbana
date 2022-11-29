@@ -50,7 +50,8 @@ class Car(Agent):
             elif direccionRoad[0].direction=="Down":
                 self.model.grid.move_agent(self,(x0,y0-1))
                 self.lastDirection="Down"
-            #Dirreciones para UpLeft, UpRight, DownLeft, DownRight: 
+            #Dirreciones para UpLeft, UpRight, DownLeft, DownRight:
+                """
             elif direccionRoad[0].direction=="UpLeft":
                 self.model.grid.move_agent(self,(x0-1,y0+1))
                 self.lastDirection="UpLeft"
@@ -63,6 +64,7 @@ class Car(Agent):
             elif direccionRoad[0].direction=="DownRight":
                 self.model.grid.move_agent(self,(x0+1,y0-1))
                 self.lastDirection="DownRight"
+                """
 
         else:
             #LastDir para Left, Right, Up, Down
@@ -75,6 +77,7 @@ class Car(Agent):
             elif self.lastDirection=="Down" and goOrStop[0].state:
                 self.model.grid.move_agent(self,(x0,y0-1))
             #LastDir para UpLeft, UpRight, DownLeft, DownRight
+                """
             elif self.lastDirection=="UpLeft" and goOrStop[0].state:
                 self.model.grid.move_agent(self,(x0-1,y0+1))
             elif self.lastDirection=="UpRight" and goOrStop[0].state:
@@ -83,6 +86,7 @@ class Car(Agent):
                 self.model.grid.move_agent(self,(x0-1,y0-1))
             elif self.lastDirection=="DownRight" and goOrStop[0].state:
                 self.model.grid.move_agent(self,(x0+1,y0-1))
+                """
 
         """
         if x0 != xf:

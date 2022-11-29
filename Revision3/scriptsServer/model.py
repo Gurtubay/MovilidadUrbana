@@ -31,10 +31,10 @@ class Grafica:
     def agregarArista(self,a,b,p):
         if a in self.vertices and b in self.vertices:
             self.vertices[a].agregarVecino(b,p)
-            self.vertices[b].agregarVecino(a,p)
-            print("Vertice inicial: " + str(a))
-            print("Vertice Final: " + str(b))
-            print("Peso: " + str(p))
+            #self.vertices[b].agregarVecino(a,p)
+            #print("Vertice inicial: " + str(a))
+            #print("Vertice Final: " + str(b))
+            #print("Peso: " + str(p))
             
             
         
@@ -126,8 +126,7 @@ class RandomModel(Model):
             lines = baseFile.readlines()
             self.width = len(lines[0])-1
             self.height = len(lines)
-            print(f"width :{self.width}")
-            print(f"height :{self.height}" )
+
             self.grid = MultiGrid(self.width, self.height, torus = False) 
             self.schedule = RandomActivation(self)
 
@@ -159,8 +158,9 @@ class RandomModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.destination_pos.append((c,self.height - r - 1))
                         rutas.agregarVertice((c, self.height - r - 1))
+                        listRoad.append([agent.pos, "Destination"])
                         listInt.append("Destination")
-                    
+
         #Lista nombre Intersecciones listInt
 
         for i in rutas.listaVertices:
@@ -404,7 +404,7 @@ class RandomModel(Model):
         rutas.dijkstra((0,0))
         print(rutas.camino((0,0),(5,4)))
         print("\nLos valores finales de la grafica son los siguientes:")
-        rutas.imprimirGrafica()           
+        #rutas.imprimirGrafica()           
         #print(rutas.imprimir_matriz(rutas.matriz))    
         self.num_agents = N
         listaWaze=[]
