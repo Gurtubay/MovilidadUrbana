@@ -86,6 +86,7 @@ class Grafica:
             
         else:
             return False
+        
 
 class RandomModel(Model):
     """ 
@@ -94,9 +95,26 @@ class RandomModel(Model):
         N: Number of agents in the simulation
     """
     def __init__(self, N):
-        
+        #addCars()
         #rutas = Grafo(self.next_id,self)
         #rutas=Grafo()
+        self.num_agents = N
+        listaWaze=[]
+        self.addCar()
+        
+        self.running = True
+        
+    
+    def step(self):
+        '''Advance the model by one step.'''
+        if self.schedule.steps % 10 == 0:
+            for agent in self.traffic_lights:
+                agent.state = not agent.state
+        if self.num_agents > 0:
+            self.addCar()
+        self.schedule.step()
+
+    def addCar(self):
         rutas=Grafica()
         #Lista completa
         listRoad=[]
@@ -396,7 +414,7 @@ class RandomModel(Model):
         print("---------------------------------------")
         print(conexionDes)
         print(len(conexionDes))
-                    
+
         #rutas.agregarArista(rutas.listaVertices[misVertices],listRoad[g][0],peso)
         #print(listRoad)
         #print(rutas.listaVertices)
@@ -405,32 +423,46 @@ class RandomModel(Model):
         print(rutas.camino((0,0),(5,4)))
         print("\nLos valores finales de la grafica son los siguientes:")
         #rutas.imprimirGrafica()           
-        #print(rutas.imprimir_matriz(rutas.matriz))    
-        self.num_agents = N
-        listaWaze=[]
-        for i in range(N) :
-            pos = (0,0)
-            pos_1 = (0,23)
-            pos_5 = (1,23)
-            pos_2 = (23,0)
-            pos_6 = (23,1)
-            pos_3 = (23,23)
-            pos_7 = (23,24)
-            position = [pos, pos_1, pos_2, pos_3, pos_5, pos_6, pos_7]
-            destination = random.choice(self.destination_pos)
-            if pos not in self.occupied:
-                car = Car(self.next_id(),self, destination, rutas)
-                self.schedule.add(car)
-                self.grid.place_agent(car,random.choice(position))
-                self.occupied.append((position))
-                print(str("id carro ") + str(car))
-                print(str("destino") + str(destination) + str(car))
-                #break
-        self.running = True
+        #print(rutas.imprimir_matriz(rutas.matriz))  
 
-    def step(self):
-        '''Advance the model by one step.'''
-        if self.schedule.steps % 10 == 0:
-            for agent in self.traffic_lights:
-                agent.state = not agent.state
-        self.schedule.step()
+        for i in range(min(self.num_agents,16)) :
+            pos_0 = (0,0)
+            pos_1 = (0,1)
+            pos_2 = (1,0)
+            pos_3 = (1,1)
+
+            pos_4 = (0,23)
+            pos_5 = (0,24)
+            pos_6 = (1,24)
+            pos_7 = (1,23)
+
+            pos_8 = (23,0)
+            pos_9 = (23,1)
+            pos_10 = (22,1)               
+            pos_11 = (22,0)
+
+            pos_12 = (23,23)
+            pos_13 = (23,24)
+            pos_14 = (22,24)
+            pos_15 = (22,23)
+
+            position = [pos_0, pos_1, pos_2, pos_3,pos_4, pos_5, pos_6, pos_7, pos_8, pos_9, pos_10, pos_11, pos_12, pos_13, pos_14, pos_15]                
+            destination = random.choice(self.destination_pos)
+            posInicial = random.choice(position)
+            counter = 0
+            self.arigato = 0
+            while posInicial in self.occupied:
+                counter += 1
+                posInicial = random.choice(position)
+                if counter > 250:
+                    counter = 0
+                    self.arigato += 1
+                    
+            car = Car(self.next_id(),self, destination, rutas)
+            self.schedule.add(car)
+            self.grid.place_agent(car,(posInicial))
+            self.occupied.append((posInicial))
+            self.num_agents -= 1
+            print(str("id carro ") + str(car))
+            print(str("destino") + str(destination) + str(car))
+            print(f"position{posInicial}")
