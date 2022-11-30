@@ -48,12 +48,12 @@ def getAgents():
         return jsonify({'positions':agentPositions})
 
 """
-@app.route('/getObstacles', methods=['GET'])
-def getObstacles():
+@app.route('/getSemaforos', methods=['GET'])
+def getSemaforos():
     global randomModel
 
     if request.method == 'GET':
-        carPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":z} for (a, x, z) in randomModel.grid.coord_iter() if isinstance(a, ObstacleAgent)]
+        carPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":y} for (a, x, z) in randomModel.grid.coord_iter() if isinstance(a, ObstacleAgent)]
 
         return jsonify({'positions':carPositions})
 """

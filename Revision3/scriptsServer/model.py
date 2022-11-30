@@ -99,7 +99,6 @@ class RandomModel(Model):
         #rutas = Grafo(self.next_id,self)
         #rutas=Grafo()
         self.num_agents = N
-        listaWaze=[]
         self.addCar()
         
         self.running = True
@@ -110,8 +109,10 @@ class RandomModel(Model):
         if self.schedule.steps % 10 == 0:
             for agent in self.traffic_lights:
                 agent.state = not agent.state
-        if self.num_agents > 0:
-            self.addCar()
+
+        elif self.schedule.steps % 1 == 0:
+            if self.num_agents > 0:
+                self.addCar()
         self.schedule.step()
 
     def addCar(self):
@@ -122,7 +123,7 @@ class RandomModel(Model):
         #Lista completa
         listRoad=[]
         listObstacle=[]
-                #Almacena todos los valores de x y y por separado
+        #Almacena todos los valores de x y y por separado
         listaX=[]
         listaY=[]
         #Almacena las distancias entre las intersecciones temporalmente para extraer el minimo
@@ -548,7 +549,6 @@ class RandomModel(Model):
             position = [pos_0, pos_1, pos_2, pos_3,pos_4, pos_5, pos_6, pos_7, pos_8, pos_9, pos_10, pos_11, pos_12, pos_13, pos_14, pos_15]                
             destination = random.choice(self.destination_pos)
             posInicial = random.choice(position)
-            rutas.dijkstra((posInicial))
             counter = 0
             self.arigato = 0
             while posInicial in self.occupied:
@@ -558,6 +558,7 @@ class RandomModel(Model):
                     counter = 0
                     self.arigato += 1
                     
+            rutas.dijkstra((posInicial))     
             car = Car(self.next_id(),self, destination, rutas)
             self.schedule.add(car)
             self.grid.place_agent(car,(posInicial))
