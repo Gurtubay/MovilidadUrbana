@@ -517,10 +517,10 @@ class RandomModel(Model):
         #rutas.agregarArista(rutas.listaVertices[misVertices],listRoad[g][0],peso)
         #print(listRoad)
         #print(rutas.listaVertices)
-        print("\n\nLa ruta mas rapida por Dijkstra junto con su costo es:")
-        rutas.dijkstra((0,0))
-        print(rutas.camino((0,0),(5,4)))
-        print("\nLos valores finales de la grafica son los siguientes:")
+        #print("\n\nLa ruta mas rapida por Dijkstra junto con su costo es:")
+        #rutas.dijkstra((0,0))
+        #print(rutas.camino((0,0),(5,4)))
+        #print("\nLos valores finales de la grafica son los siguientes:")
         #rutas.imprimirGrafica()           
         #print(rutas.imprimir_matriz(rutas.matriz))  
 
@@ -548,6 +548,7 @@ class RandomModel(Model):
             position = [pos_0, pos_1, pos_2, pos_3,pos_4, pos_5, pos_6, pos_7, pos_8, pos_9, pos_10, pos_11, pos_12, pos_13, pos_14, pos_15]                
             destination = random.choice(self.destination_pos)
             posInicial = random.choice(position)
+            rutas.dijkstra((posInicial))
             counter = 0
             self.arigato = 0
             while posInicial in self.occupied:

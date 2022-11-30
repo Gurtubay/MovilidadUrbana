@@ -40,9 +40,9 @@ class Car(Agent):
         position =self.model.grid.get_cell_list_contents([self.pos])
         direccionRoad=[obj for obj in position if isinstance(obj,Road)]
         goOrStop = [obj for obj in position if isinstance(obj,Traffic_Light)]
-        print(self.unique_id "|" self.Waze)
-        print(self.unique_id "|" self.pos)
-        print(self.unique_id "|" self.Waze[0][self.reachVertice])
+        print(str(self.unique_id) +"|"+ str(self.Waze))
+        print(str(self.unique_id) +"|" +str(self.pos))
+        print(str(self.unique_id)+ "|" +str(self.Waze[0][self.reachVertice]))
         if self.Waze[0][self.reachVertice] == self.destination:
             if self.pos[0]==self.destination[0]+1 and self.pos[1]==self.destination[1]+1:
                 self.model.grid.move_agent(self,(x0-1,y0-1))
