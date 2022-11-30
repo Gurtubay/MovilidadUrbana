@@ -115,9 +115,13 @@ class RandomModel(Model):
         self.schedule.step()
 
     def addCar(self):
+        
+        #rutas = Grafo(self.next_id,self)
+        #rutas=Grafo()
         rutas=Grafica()
         #Lista completa
         listRoad=[]
+        listObstacle=[]
                 #Almacena todos los valores de x y y por separado
         listaX=[]
         listaY=[]
@@ -170,6 +174,7 @@ class RandomModel(Model):
                     elif col == "#":
                         agent = Obstacle(f"ob_{r*self.width+c}", self)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
+                        listObstacle.append([(c, self.height - r - 1), "Obstacle"])
 
                     elif col == "D":
                         agent = Destination(f"d_{r*self.width+c}", self)
@@ -191,14 +196,37 @@ class RandomModel(Model):
                 for j in range(len(listaX)):
                     if rutas.listaVertices[i][0] == listaX[j]:
                         if listaY[j]-rutas.listaVertices[i][1] > 0:
-                            subY.append(listaY[j]-rutas.listaVertices[i][1])
-                            posicionVer.append((listaX[j],listaY[j]))
-                            
+                            if listaY[j]-rutas.listaVertices[i][1] > 1:
+                                cont=listaY[j]-rutas.listaVertices[i][1]-1
+                                while cont>0:
+                                    if [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]+cont),"Obstacle"] not in listObstacle:
+                                        cont-=1
+                                        if cont==0:
+                                            subY.append(listaY[j]-rutas.listaVertices[i][1])
+                                            posicionVer.append((listaX[j],listaY[j]))
+                                        
+                                    else:
+                                        break
+                            else:
+                                subY.append(listaY[j]-rutas.listaVertices[i][1])
+                                posicionVer.append((listaX[j],listaY[j]))
                                                 
                     elif rutas.listaVertices[i][1] == listaY[j]:
                         if rutas.listaVertices[i][0]-listaX[j] > 0:
-                            subX.append(rutas.listaVertices[i][0]-listaX[j])
-                            posicionHor.append((listaX[j],listaY[j]))
+                            if rutas.listaVertices[i][0]-listaX[j] > 1:
+                                cont=rutas.listaVertices[i][0]-listaX[j]-1
+                                while cont>0:
+                                    if [(rutas.listaVertices[i][0]-cont,rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
+                                        cont-=1
+                                        if cont==0:
+                                            subX.append(rutas.listaVertices[i][0]-listaX[j])
+                                            posicionHor.append((listaX[j],listaY[j]))
+                                        
+                                    else:
+                                        break
+                            else:
+                                subX.append(rutas.listaVertices[i][0]-listaX[j])
+                                posicionHor.append((listaX[j],listaY[j]))
               
                 if len(subY)>0:
                     if min(subY)>1:
@@ -245,16 +273,38 @@ class RandomModel(Model):
                 for j in range(len(listaX)):
                     if rutas.listaVertices[i][0] == listaX[j]:
                         if listaY[j]-rutas.listaVertices[i][1] > 0:
-                            subY.append(listaY[j]-rutas.listaVertices[i][1])
-                            posicionVer.append((listaX[j],listaY[j]))
-                            
+                            if listaY[j]-rutas.listaVertices[i][1] > 1:
+                                cont=listaY[j]-rutas.listaVertices[i][1]-1
+                                while cont>0:
+                                    if [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]+cont),"Obstacle"] not in listObstacle:
+                                        cont-=1
+                                        if cont==0:
+                                            subY.append(listaY[j]-rutas.listaVertices[i][1])
+                                            posicionVer.append((listaX[j],listaY[j]))
+                                        
+                                    else:
+                                        break
+                            else:
+                                subY.append(listaY[j]-rutas.listaVertices[i][1])
+                                posicionVer.append((listaX[j],listaY[j]))
                                        
                             
                     elif rutas.listaVertices[i][1] == listaY[j]:
                         if listaX[j]-rutas.listaVertices[i][0] > 0:
-                            subX.append(listaX[j]-rutas.listaVertices[i][0])
-                            posicionHor.append((listaX[j],listaY[j]))
-                            
+                            if listaX[j]-rutas.listaVertices[i][0] > 1:
+                                cont=listaX[j]-rutas.listaVertices[i][0]-1
+                                while cont>0:
+                                    if [(rutas.listaVertices[i][0]+cont, rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
+                                        cont-=1
+                                        if cont ==0:
+                                            subX.append(listaX[j]-rutas.listaVertices[i][0])
+                                            posicionHor.append((listaX[j],listaY[j]))
+                                        
+                                    else:
+                                        break
+                            else:
+                                subX.append(listaX[j]-rutas.listaVertices[i][0])
+                                posicionHor.append((listaX[j],listaY[j]))
                       
                 if len(subY)>0:
                     if min(subY)>1:
@@ -300,19 +350,44 @@ class RandomModel(Model):
                 for j in range(len(listaX)):
                     if rutas.listaVertices[i][0] == listaX[j]:
                         if rutas.listaVertices[i][1]-listaY[j] > 0:
-                            subY.append(rutas.listaVertices[i][1]-listaY[j])
-                            posicionVer.append((listaX[j],listaY[j]))       
+                            if rutas.listaVertices[i][1]-listaY[j] > 1:
+                                cont=rutas.listaVertices[i][1]-listaY[j]-1
+                                while cont>0:
+                                    if [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]-cont),"Obstacle"] not in listObstacle:
+                                        cont-=1
+                                        if cont==0:
+                                            subY.append(rutas.listaVertices[i][1]-listaY[j])
+                                            posicionVer.append((listaX[j],listaY[j]))
+                                        
+                                    else:
+                                        break
+                            else:
+                                subY.append(rutas.listaVertices[i][1]-listaY[j])
+                                posicionVer.append((listaX[j],listaY[j]))
+                                
                     elif rutas.listaVertices[i][1] == listaY[j]:
                         if listaX[j]-rutas.listaVertices[i][0] > 0:
-                            subX.append(listaX[j]-rutas.listaVertices[i][0])
-                            posicionHor.append((listaX[j],listaY[j]))
+                            if listaX[j]-rutas.listaVertices[i][0] > 1:
+                                cont=listaX[j]-rutas.listaVertices[i][0]-1
+                                while cont>0:
+                                    if [(rutas.listaVertices[i][0]+cont,rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
+                                        cont-=1
+                                        if cont==0:
+                                            subX.append(listaX[j]-rutas.listaVertices[i][0])
+                                            posicionHor.append((listaX[j],listaY[j]))
+                                        
+                                    else:
+                                        break
+                            else:
+                                subX.append(listaX[j]-rutas.listaVertices[i][0])
+                                posicionHor.append((listaX[j],listaY[j]))
                             
                 if len(subY)>0:
                     if min(subY)>1:
                         for k in range(min(subY)):
                             if [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
                                 conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1)
+                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k),k+1)
                                 
                             elif [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
                                 conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k),k+1))
@@ -320,7 +395,7 @@ class RandomModel(Model):
                                 
                             elif [(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k), "Down"] in listRoad:
                                 conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k),k+2)
+                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]-k),k+2)
                                 
                             elif [(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k), "Down"] in listRoad:
                                 conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k),k+2))
@@ -350,33 +425,54 @@ class RandomModel(Model):
                 for j in range(len(listaX)):
                     if rutas.listaVertices[i][0] == listaX[j]:
                         if rutas.listaVertices[i][1]-listaY[j] > 0:
-                            subY.append(rutas.listaVertices[i][1]-listaY[j])
-                            posicionVer.append((listaX[j],listaY[j]))
+                            if rutas.listaVertices[i][1]-listaY[j] > 1:
+                                cont=rutas.listaVertices[i][1]-listaY[j]-1
+                                while cont>0:
+                                    if [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]-cont),"Obstacle"] not in listObstacle:
+                                        cont-=1
+                                        if cont==0:
+                                            subY.append(rutas.listaVertices[i][1]-listaY[j])
+                                            posicionVer.append((listaX[j],listaY[j]))
+                                    else:
+                                        break
+                            else:
+                                subY.append(rutas.listaVertices[i][1]-listaY[j])
+                                posicionVer.append((listaX[j],listaY[j]))                               
                                      
                     elif rutas.listaVertices[i][1] == listaY[j]:
                         if rutas.listaVertices[i][0]-listaX[j] > 0:
-                            subX.append(rutas.listaVertices[i][0]-listaX[j])
-                            posicionHor.append((listaX[j],listaY[j]))
-                            
+                            if rutas.listaVertices[i][0]-listaX[j] > 1:
+                                cont=rutas.listaVertices[i][0]-listaX[j]-1
+                                while cont>0:
+                                    if [(rutas.listaVertices[i][0]-cont,rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
+                                        cont-=1
+                                        if cont==0:
+                                            subX.append(rutas.listaVertices[i][0]-listaX[j])
+                                            posicionHor.append((listaX[j],listaY[j]))
+                                    else:
+                                        break
+                            else:
+                                subX.append(rutas.listaVertices[i][0]-listaX[j])
+                                posicionHor.append((listaX[j],listaY[j]))
+                                
+
                 if len(subY)>0:
-                    if min(subY)>1:
+                    if min(subY)>1:# and [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]-1), "Down"] in listRoad:
                         for k in range(min(subY)):
+
                             if [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
                                 conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1)
-                                
+                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k),k+1)                            
                             elif [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
                                 conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k),k+1))
                                 rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k),k+1)
-                                
                             elif [(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k), "Down"] in listRoad:
                                 conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k),k+2)
-                                
+                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]-k),k+2)
                             elif [(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k), "Down"] in listRoad:
                                 conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k),k+2))
                                 rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k),k+2)
-                
+                                
                 if len(subX)>0:
                     if min(subX)>1:
                         for k in range(min(subX)):
@@ -409,12 +505,15 @@ class RandomModel(Model):
                 subX=[]
 
         print(conexionVer)
+        print(len(conexionVer))
         print("---------------------------------------")
         print(conexionHor)
+        print(len(conexionHor))
         print("---------------------------------------")
         print(conexionDes)
         print(len(conexionDes))
-
+        print("---------------------------------------")
+        print(self.destination_pos)       
         #rutas.agregarArista(rutas.listaVertices[misVertices],listRoad[g][0],peso)
         #print(listRoad)
         #print(rutas.listaVertices)
