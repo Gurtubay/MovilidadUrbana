@@ -96,10 +96,11 @@ class RandomModel(Model):
     """
     def __init__(self, N):
         #addCars()
-        #rutas = Grafo(self.next_id,self)
-        #rutas=Grafo()
+        #self.rutas = Grafo(self.next_id,self)
+        #self.rutas=Grafo()
         self.num_agents = N
         self.addCar()
+        self.Ronda()
         
         self.running = True
         
@@ -112,18 +113,19 @@ class RandomModel(Model):
 
         elif self.schedule.steps % 3 == 0:
             if self.num_agents > 0:
+                print(f"me mato aidrian{self.num_agents}")
                 #self.num_agents = self.arigato
                 #self.occupied = []
-                self.addCar()
+                self.Ronda()
 
                 
         self.schedule.step()
 
     def addCar(self):
         
-        #rutas = Grafo(self.next_id,self)
-        #rutas=Grafo()
-        rutas=Grafica()
+        #self.rutas = Grafo(self.next_id,self)
+        #self.rutas=Grafo()
+        self.rutas=Grafica()
         #Lista completa
         listRoad=[]
         listObstacle=[]
@@ -167,7 +169,7 @@ class RandomModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         listRoad.append([agent.pos, agent.direction])
                         if col in ["$","&","%","*"]:
-                            rutas.agregarVertice((c, self.height - r - 1))
+                            self.rutas.agregarVertice((c, self.height - r - 1))
                             listInt.append(dataDictionary[col])
                         
                     elif col in ["S", "s"]:
@@ -185,327 +187,327 @@ class RandomModel(Model):
                         agent = Destination(f"d_{r*self.width+c}", self)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.destination_pos.append((c,self.height - r - 1))
-                        rutas.agregarVertice((c, self.height - r - 1))
+                        self.rutas.agregarVertice((c, self.height - r - 1))
                         listRoad.append([agent.pos, "Destination"])
                         listInt.append("Destination")
 
         #Lista nombre Intersecciones listInt
 
-        for i in rutas.listaVertices:
+        for i in self.rutas.listaVertices:
             listaX.append(i[0])
             listaY.append(i[1])
 
-        for i in range(len(rutas.listaVertices)):
+        for i in range(len(self.rutas.listaVertices)):
             
             if listInt[i] == "UpLeft":
                 for j in range(len(listaX)):
-                    if rutas.listaVertices[i][0] == listaX[j]:
-                        if listaY[j]-rutas.listaVertices[i][1] > 0:
-                            if listaY[j]-rutas.listaVertices[i][1] > 1:
-                                cont=listaY[j]-rutas.listaVertices[i][1]-1
+                    if self.rutas.listaVertices[i][0] == listaX[j]:
+                        if listaY[j]-self.rutas.listaVertices[i][1] > 0:
+                            if listaY[j]-self.rutas.listaVertices[i][1] > 1:
+                                cont=listaY[j]-self.rutas.listaVertices[i][1]-1
                                 while cont>0:
-                                    if [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]+cont),"Obstacle"] not in listObstacle:
+                                    if [(self.rutas.listaVertices[i][0],self.rutas.listaVertices[i][1]+cont),"Obstacle"] not in listObstacle:
                                         cont-=1
                                         if cont==0:
-                                            subY.append(listaY[j]-rutas.listaVertices[i][1])
+                                            subY.append(listaY[j]-self.rutas.listaVertices[i][1])
                                             posicionVer.append((listaX[j],listaY[j]))
                                         
                                     else:
                                         break
                             else:
-                                subY.append(listaY[j]-rutas.listaVertices[i][1])
+                                subY.append(listaY[j]-self.rutas.listaVertices[i][1])
                                 posicionVer.append((listaX[j],listaY[j]))
                                                 
-                    elif rutas.listaVertices[i][1] == listaY[j]:
-                        if rutas.listaVertices[i][0]-listaX[j] > 0:
-                            if rutas.listaVertices[i][0]-listaX[j] > 1:
-                                cont=rutas.listaVertices[i][0]-listaX[j]-1
+                    elif self.rutas.listaVertices[i][1] == listaY[j]:
+                        if self.rutas.listaVertices[i][0]-listaX[j] > 0:
+                            if self.rutas.listaVertices[i][0]-listaX[j] > 1:
+                                cont=self.rutas.listaVertices[i][0]-listaX[j]-1
                                 while cont>0:
-                                    if [(rutas.listaVertices[i][0]-cont,rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
+                                    if [(self.rutas.listaVertices[i][0]-cont,self.rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
                                         cont-=1
                                         if cont==0:
-                                            subX.append(rutas.listaVertices[i][0]-listaX[j])
+                                            subX.append(self.rutas.listaVertices[i][0]-listaX[j])
                                             posicionHor.append((listaX[j],listaY[j]))
                                         
                                     else:
                                         break
                             else:
-                                subX.append(rutas.listaVertices[i][0]-listaX[j])
+                                subX.append(self.rutas.listaVertices[i][0]-listaX[j])
                                 posicionHor.append((listaX[j],listaY[j]))
               
                 if len(subY)>0:
                     if min(subY)>1:
                         for k in range(min(subY)):
                             
-                            if [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1)
+                            if [(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k),k+1)
+                            elif [(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k),k+1)
                             
-                            elif [(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k), "Up"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+2)
+                            elif [(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]+k), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k), "Up"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k),k+2)
                                 
-                            elif [(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]+k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k), "Up"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k),k+2)
+                            elif [(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]+k), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k), "Up"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k),k+2)
                 
                 if len(subX)>0:
                     if min(subX)>1:
                         for k in range(min(subX)):
                             
-                            if [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+1),"Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+1),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+1),k+1)
+                            if [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+1),"Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+1),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+1),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-1), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-1),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-1),k+1)
+                            elif [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-1), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-1),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-1),k+1)
                                 
                                 
-                            elif [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+2),"Destination"] in listRoad and [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+1),"Left"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+2),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+2),k+2)
+                            elif [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+2),"Destination"] in listRoad and [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+1),"Left"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+2),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+2),k+2)
                                 
-                            elif [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-2), "Destination"] in listRoad and [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-1), "Left"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-2),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-2),k+2)
+                            elif [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-2), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-1), "Left"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-2),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-2),k+2)
                                 
             if listInt[i] == "UpRight":
                 for j in range(len(listaX)):
-                    if rutas.listaVertices[i][0] == listaX[j]:
-                        if listaY[j]-rutas.listaVertices[i][1] > 0:
-                            if listaY[j]-rutas.listaVertices[i][1] > 1:
-                                cont=listaY[j]-rutas.listaVertices[i][1]-1
+                    if self.rutas.listaVertices[i][0] == listaX[j]:
+                        if listaY[j]-self.rutas.listaVertices[i][1] > 0:
+                            if listaY[j]-self.rutas.listaVertices[i][1] > 1:
+                                cont=listaY[j]-self.rutas.listaVertices[i][1]-1
                                 while cont>0:
-                                    if [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]+cont),"Obstacle"] not in listObstacle:
+                                    if [(self.rutas.listaVertices[i][0],self.rutas.listaVertices[i][1]+cont),"Obstacle"] not in listObstacle:
                                         cont-=1
                                         if cont==0:
-                                            subY.append(listaY[j]-rutas.listaVertices[i][1])
+                                            subY.append(listaY[j]-self.rutas.listaVertices[i][1])
                                             posicionVer.append((listaX[j],listaY[j]))
                                         
                                     else:
                                         break
                             else:
-                                subY.append(listaY[j]-rutas.listaVertices[i][1])
+                                subY.append(listaY[j]-self.rutas.listaVertices[i][1])
                                 posicionVer.append((listaX[j],listaY[j]))
                                        
                             
-                    elif rutas.listaVertices[i][1] == listaY[j]:
-                        if listaX[j]-rutas.listaVertices[i][0] > 0:
-                            if listaX[j]-rutas.listaVertices[i][0] > 1:
-                                cont=listaX[j]-rutas.listaVertices[i][0]-1
+                    elif self.rutas.listaVertices[i][1] == listaY[j]:
+                        if listaX[j]-self.rutas.listaVertices[i][0] > 0:
+                            if listaX[j]-self.rutas.listaVertices[i][0] > 1:
+                                cont=listaX[j]-self.rutas.listaVertices[i][0]-1
                                 while cont>0:
-                                    if [(rutas.listaVertices[i][0]+cont, rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
+                                    if [(self.rutas.listaVertices[i][0]+cont, self.rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
                                         cont-=1
                                         if cont ==0:
-                                            subX.append(listaX[j]-rutas.listaVertices[i][0])
+                                            subX.append(listaX[j]-self.rutas.listaVertices[i][0])
                                             posicionHor.append((listaX[j],listaY[j]))
                                         
                                     else:
                                         break
                             else:
-                                subX.append(listaX[j]-rutas.listaVertices[i][0])
+                                subX.append(listaX[j]-self.rutas.listaVertices[i][0])
                                 posicionHor.append((listaX[j],listaY[j]))
                       
                 if len(subY)>0:
                     if min(subY)>1:
                         for k in range(min(subY)):
                             
-                            if [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1)
+                            if [(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k),k+1)
+                            elif [(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k), "Up"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k),k+2)
+                            elif [(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]+k), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k), "Up"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]+k),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]+k),k+2)
                                 
-                            elif [(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]+k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]+k), "Up"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]+k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]+k),k+2)
+                            elif [(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]+k), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]+k), "Up"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]+k),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]+k),k+2)
                 
                 if len(subX)>0:
                     if min(subX)>1:
                         for k in range(min(subX)):
                             
-                            if [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+1),"Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+1),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+1),k+1)
+                            if [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+1),"Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+1),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+1),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-1), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-1),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-1),k+1)
+                            elif [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-1), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-1),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-1),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+2),"Destination"] in listRoad and [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+1),"Right"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+2),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+2),k+2)
+                            elif [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+2),"Destination"] in listRoad and [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+1),"Right"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+2),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+2),k+2)
                                 
-                            elif [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-2), "Destination"] in listRoad and [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-1), "Right"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-2),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-2),k+2)
+                            elif [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-2), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-1), "Right"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-2),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-2),k+2)
                               
             if listInt[i] == "DownRight":
                 for j in range(len(listaX)):
-                    if rutas.listaVertices[i][0] == listaX[j]:
-                        if rutas.listaVertices[i][1]-listaY[j] > 0:
-                            if rutas.listaVertices[i][1]-listaY[j] > 1:
-                                cont=rutas.listaVertices[i][1]-listaY[j]-1
+                    if self.rutas.listaVertices[i][0] == listaX[j]:
+                        if self.rutas.listaVertices[i][1]-listaY[j] > 0:
+                            if self.rutas.listaVertices[i][1]-listaY[j] > 1:
+                                cont=self.rutas.listaVertices[i][1]-listaY[j]-1
                                 while cont>0:
-                                    if [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]-cont),"Obstacle"] not in listObstacle:
+                                    if [(self.rutas.listaVertices[i][0],self.rutas.listaVertices[i][1]-cont),"Obstacle"] not in listObstacle:
                                         cont-=1
                                         if cont==0:
-                                            subY.append(rutas.listaVertices[i][1]-listaY[j])
+                                            subY.append(self.rutas.listaVertices[i][1]-listaY[j])
                                             posicionVer.append((listaX[j],listaY[j]))
                                         
                                     else:
                                         break
                             else:
-                                subY.append(rutas.listaVertices[i][1]-listaY[j])
+                                subY.append(self.rutas.listaVertices[i][1]-listaY[j])
                                 posicionVer.append((listaX[j],listaY[j]))
                                 
-                    elif rutas.listaVertices[i][1] == listaY[j]:
-                        if listaX[j]-rutas.listaVertices[i][0] > 0:
-                            if listaX[j]-rutas.listaVertices[i][0] > 1:
-                                cont=listaX[j]-rutas.listaVertices[i][0]-1
+                    elif self.rutas.listaVertices[i][1] == listaY[j]:
+                        if listaX[j]-self.rutas.listaVertices[i][0] > 0:
+                            if listaX[j]-self.rutas.listaVertices[i][0] > 1:
+                                cont=listaX[j]-self.rutas.listaVertices[i][0]-1
                                 while cont>0:
-                                    if [(rutas.listaVertices[i][0]+cont,rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
+                                    if [(self.rutas.listaVertices[i][0]+cont,self.rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
                                         cont-=1
                                         if cont==0:
-                                            subX.append(listaX[j]-rutas.listaVertices[i][0])
+                                            subX.append(listaX[j]-self.rutas.listaVertices[i][0])
                                             posicionHor.append((listaX[j],listaY[j]))
                                         
                                     else:
                                         break
                             else:
-                                subX.append(listaX[j]-rutas.listaVertices[i][0])
+                                subX.append(listaX[j]-self.rutas.listaVertices[i][0])
                                 posicionHor.append((listaX[j],listaY[j]))
                             
                 if len(subY)>0:
                     if min(subY)>1:
                         for k in range(min(subY)):
-                            if [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k),k+1)
+                            if [(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]-k),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k),k+1)
+                            elif [(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]-k),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]-k),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k), "Down"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]-k),k+2)
+                            elif [(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]-k), "Down"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]+k),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]-k),k+2)
                                 
-                            elif [(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k), "Down"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k),k+2)
+                            elif [(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]-k), "Down"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]-k),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]-k),k+2)
                 
                 if len(subX)>0:
                     if min(subX)>1:
                         for k in range(min(subX)):
-                            if [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+1),"Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+1),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+1),k+1)
+                            if [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+1),"Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+1),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+1),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-1), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-1),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-1),k+1)
+                            elif [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-1), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-1),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-1),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+2),"Destination"] in listRoad and [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+1),"Right"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+2),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]+2),k+2)
+                            elif [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+2),"Destination"] in listRoad and [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+1),"Right"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+2),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]+2),k+2)
                                 
-                            elif [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-2), "Destination"] in listRoad and [(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-1), "Right"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-2),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+k,rutas.listaVertices[i][1]-2),k+2)
+                            elif [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-2), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-1), "Right"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-2),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+k,self.rutas.listaVertices[i][1]-2),k+2)
             
             
             if listInt[i] == "DownLeft":
                 for j in range(len(listaX)):
-                    if rutas.listaVertices[i][0] == listaX[j]:
-                        if rutas.listaVertices[i][1]-listaY[j] > 0:
-                            if rutas.listaVertices[i][1]-listaY[j] > 1:
-                                cont=rutas.listaVertices[i][1]-listaY[j]-1
+                    if self.rutas.listaVertices[i][0] == listaX[j]:
+                        if self.rutas.listaVertices[i][1]-listaY[j] > 0:
+                            if self.rutas.listaVertices[i][1]-listaY[j] > 1:
+                                cont=self.rutas.listaVertices[i][1]-listaY[j]-1
                                 while cont>0:
-                                    if [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]-cont),"Obstacle"] not in listObstacle:
+                                    if [(self.rutas.listaVertices[i][0],self.rutas.listaVertices[i][1]-cont),"Obstacle"] not in listObstacle:
                                         cont-=1
                                         if cont==0:
-                                            subY.append(rutas.listaVertices[i][1]-listaY[j])
+                                            subY.append(self.rutas.listaVertices[i][1]-listaY[j])
                                             posicionVer.append((listaX[j],listaY[j]))
                                     else:
                                         break
                             else:
-                                subY.append(rutas.listaVertices[i][1]-listaY[j])
+                                subY.append(self.rutas.listaVertices[i][1]-listaY[j])
                                 posicionVer.append((listaX[j],listaY[j]))                               
                                      
-                    elif rutas.listaVertices[i][1] == listaY[j]:
-                        if rutas.listaVertices[i][0]-listaX[j] > 0:
-                            if rutas.listaVertices[i][0]-listaX[j] > 1:
-                                cont=rutas.listaVertices[i][0]-listaX[j]-1
+                    elif self.rutas.listaVertices[i][1] == listaY[j]:
+                        if self.rutas.listaVertices[i][0]-listaX[j] > 0:
+                            if self.rutas.listaVertices[i][0]-listaX[j] > 1:
+                                cont=self.rutas.listaVertices[i][0]-listaX[j]-1
                                 while cont>0:
-                                    if [(rutas.listaVertices[i][0]-cont,rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
+                                    if [(self.rutas.listaVertices[i][0]-cont,self.rutas.listaVertices[i][1]),"Obstacle"] not in listObstacle:
                                         cont-=1
                                         if cont==0:
-                                            subX.append(rutas.listaVertices[i][0]-listaX[j])
+                                            subX.append(self.rutas.listaVertices[i][0]-listaX[j])
                                             posicionHor.append((listaX[j],listaY[j]))
                                     else:
                                         break
                             else:
-                                subX.append(rutas.listaVertices[i][0]-listaX[j])
+                                subX.append(self.rutas.listaVertices[i][0]-listaX[j])
                                 posicionHor.append((listaX[j],listaY[j]))
                                 
 
                 if len(subY)>0:
-                    if min(subY)>1:# and [(rutas.listaVertices[i][0],rutas.listaVertices[i][1]-1), "Down"] in listRoad:
+                    if min(subY)>1:# and [(self.rutas.listaVertices[i][0],self.rutas.listaVertices[i][1]-1), "Down"] in listRoad:
                         for k in range(min(subY)):
 
-                            if [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]+k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k),k+1)                            
-                            elif [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k),k+1)
-                            elif [(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]+1,rutas.listaVertices[i][1]-k), "Down"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]+k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]+2,rutas.listaVertices[i][1]-k),k+2)
-                            elif [(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(rutas.listaVertices[i][0]-1,rutas.listaVertices[i][1]-k), "Down"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-2,rutas.listaVertices[i][1]-k),k+2)
+                            if [(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]+k),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]-k),k+1)                            
+                            elif [(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]-k), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]-k),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]-k),k+1)
+                            elif [(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]+1,self.rutas.listaVertices[i][1]-k), "Down"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]+k),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]+2,self.rutas.listaVertices[i][1]-k),k+2)
+                            elif [(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]-k), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]-1,self.rutas.listaVertices[i][1]-k), "Down"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]-k),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-2,self.rutas.listaVertices[i][1]-k),k+2)
                                 
                 if len(subX)>0:
                     if min(subX)>1:
                         for k in range(min(subX)):
-                            if [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+1),"Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+1),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+1),k+1)
+                            if [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+1),"Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+1),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+1),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-1), "Destination"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-1),k+1))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-1),k+1)
+                            elif [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-1), "Destination"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-1),k+1))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-1),k+1)
                                 
-                            elif [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+2),"Destination"] in listRoad and [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+1),"Left"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+2),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]+2),k+2)
+                            elif [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+2),"Destination"] in listRoad and [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+1),"Left"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+2),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]+2),k+2)
                                 
-                            elif [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-2), "Destination"] in listRoad and [(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-1), "Left"] in listRoad:
-                                conexionDes.append((rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-2),k+2))
-                                rutas.agregarArista(rutas.listaVertices[i],(rutas.listaVertices[i][0]-k,rutas.listaVertices[i][1]-2),k+2)
+                            elif [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-2), "Destination"] in listRoad and [(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-1), "Left"] in listRoad:
+                                conexionDes.append((self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-2),k+2))
+                                self.rutas.agregarArista(self.rutas.listaVertices[i],(self.rutas.listaVertices[i][0]-k,self.rutas.listaVertices[i][1]-2),k+2)
                                 
                 
             if len(subY)>0:
-                conexionVer.append((rutas.listaVertices[i],posicionVer[subY.index(min(subY))],min(subY)))
-                rutas.agregarArista(rutas.listaVertices[i],posicionVer[subY.index(min(subY))],min(subY))
+                conexionVer.append((self.rutas.listaVertices[i],posicionVer[subY.index(min(subY))],min(subY)))
+                self.rutas.agregarArista(self.rutas.listaVertices[i],posicionVer[subY.index(min(subY))],min(subY))
                 posicionVer=[]
                 subY=[]
             if len(subX)>0:
-                conexionHor.append((rutas.listaVertices[i],posicionHor[subX.index(min(subX))],min(subX)))
-                rutas.agregarArista(rutas.listaVertices[i],posicionHor[subX.index(min(subX))],min(subX))
+                conexionHor.append((self.rutas.listaVertices[i],posicionHor[subX.index(min(subX))],min(subX)))
+                self.rutas.agregarArista(self.rutas.listaVertices[i],posicionHor[subX.index(min(subX))],min(subX))
                 posicionHor=[]
                 subX=[]
 
@@ -519,16 +521,17 @@ class RandomModel(Model):
         print(len(conexionDes))
         print("---------------------------------------")
         print(self.destination_pos)       
-        #rutas.agregarArista(rutas.listaVertices[misVertices],listRoad[g][0],peso)
+        #self.rutas.agregarArista(self.rutas.listaVertices[misVertices],listRoad[g][0],peso)
         #print(listRoad)
-        #print(rutas.listaVertices)
+        #print(self.rutas.listaVertices)
         #print("\n\nLa ruta mas rapida por Dijkstra junto con su costo es:")
-        #rutas.dijkstra((0,0))
-        #print(rutas.camino((0,0),(5,4)))
+        #self.rutas.dijkstra((0,0))
+        #print(self.rutas.camino((0,0),(5,4)))
         #print("\nLos valores finales de la grafica son los siguientes:")
-        #rutas.imprimirGrafica()           
-        #print(rutas.imprimir_matriz(rutas.matriz))  
+        #self.rutas.imprimirGrafica()           
+        #print(self.rutas.imprimir_matriz(self.rutas.matriz))  
         
+    def Ronda(self):
         self.occupied = []
         for i in range(min(self.num_agents,16)) :
             
@@ -561,12 +564,13 @@ class RandomModel(Model):
                 counter += 1
                 posInicial = random.choice(position)
                 if counter > 250:
+                    #arigato = self.num_agents - len(self.occupied)
                     break
             
-            print(f"arigatooooPAPA{self.arigato}")
+            #print(f"arigatooooPAPA{self.arigato}")
                     
-            rutas.dijkstra((posInicial))     
-            car = Car(self.next_id(),self, destination, rutas)
+            self.rutas.dijkstra((posInicial))     
+            car = Car(self.next_id(),self, destination, self.rutas)
             self.schedule.add(car)
             self.grid.place_agent(car,(posInicial))
             self.occupied.append((posInicial))
