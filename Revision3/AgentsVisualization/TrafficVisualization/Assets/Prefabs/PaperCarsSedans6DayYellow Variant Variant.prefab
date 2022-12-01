@@ -1,5 +1,99 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1909303093901589301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6160590116451346112}
+  - component: {fileID: 8856864828485139609}
+  m_Layer: 0
+  m_Name: Spot Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6160590116451346112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909303093901589301}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.51, z: 1.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8971804949965662631}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!108 &8856864828485139609
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909303093901589301}
+  m_Enabled: 1
+  serializedVersion: 10
+  m_Type: 0
+  m_Shape: 0
+  m_Color: {r: 1, g: 0.85647917, b: 0, a: 1}
+  m_Intensity: 1
+  m_Range: 10
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
 --- !u!1001 &6866127013735278056
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -74,22 +168,27 @@ PrefabInstance:
     - target: {fileID: 3710983588849858336, guid: 84158327ffde7ea41b33d0c7bb836b9f, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: 9e2cc3e78f39479459179c1d2598a15c, type: 2}
+      objectReference: {fileID: 2100000, guid: f14cfca0244e999408e1c75979eed203, type: 2}
     - target: {fileID: 3710983588849858336, guid: 84158327ffde7ea41b33d0c7bb836b9f, type: 3}
       propertyPath: m_Materials.Array.data[2]
       value: 
-      objectReference: {fileID: 2100000, guid: 8afe80c90dc3c4e498e5ccf9982746f2, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 3710983588849858336, guid: 84158327ffde7ea41b33d0c7bb836b9f, type: 3}
       propertyPath: m_Materials.Array.data[3]
       value: 
-      objectReference: {fileID: 2100000, guid: ab01dac8ec90a8349bdefe9a1c96c94d, type: 2}
+      objectReference: {fileID: 2100000, guid: 4975d396bc120944e836d4919735bf65, type: 2}
     - target: {fileID: 3710983588849858336, guid: 84158327ffde7ea41b33d0c7bb836b9f, type: 3}
       propertyPath: m_Materials.Array.data[4]
       value: 
-      objectReference: {fileID: 2100000, guid: bab79478551862e44abc5098f13b0d6b, type: 2}
+      objectReference: {fileID: 2100000, guid: 67975aa2220a3eb42ad9ea48f7ae7dfd, type: 2}
     - target: {fileID: 3710983588849858336, guid: 84158327ffde7ea41b33d0c7bb836b9f, type: 3}
       propertyPath: m_Materials.Array.data[5]
       value: 
-      objectReference: {fileID: 2100000, guid: d26c60859b5e02e47843ea5b2ba668b7, type: 2}
+      objectReference: {fileID: 2100000, guid: 93883421c89899aa0a04890eb2ce2e75, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84158327ffde7ea41b33d0c7bb836b9f, type: 3}
+--- !u!4 &8971804949965662631 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2579193923090828367, guid: 84158327ffde7ea41b33d0c7bb836b9f, type: 3}
+  m_PrefabInstance: {fileID: 6866127013735278056}
+  m_PrefabAsset: {fileID: 0}
