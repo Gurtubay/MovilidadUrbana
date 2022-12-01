@@ -200,7 +200,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 136675311}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 12.53, y: 21, z: 10.87}
+  m_LocalPosition: {x: 12.53, y: 22, z: 10.87}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -332,10 +332,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agentPrefab: {fileID: 8631590404560204573, guid: 0420f394461dea74fb1eb500f843edc9, type: 3}
   floor: {fileID: 1457529882}
-  NAgents: 4
+  NAgents: 5
   width: 24
   height: 25
-  timeToUpdate: 5
+  timeToUpdate: 1
 --- !u!4 &994314423
 Transform:
   m_ObjectHideFlags: 0

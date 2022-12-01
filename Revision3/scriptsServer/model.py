@@ -95,9 +95,6 @@ class RandomModel(Model):
         N: Number of agents in the simulation
     """
     def __init__(self, N):
-        #addCars()
-        #self.rutas = Grafo(self.next_id,self)
-        #self.rutas=Grafo()
         self.num_agents = N
         self.addCar()
         self.Ronda()
@@ -111,11 +108,8 @@ class RandomModel(Model):
             for agent in self.traffic_lights:
                 agent.state = not agent.state
 
-        elif self.schedule.steps % 3 == 0:
+        elif self.schedule.steps % 5 == 0:
             if self.num_agents > 0:
-                print(f"me mato aidrian{self.num_agents}")
-                #self.num_agents = self.arigato
-                #self.occupied = []
                 self.Ronda()
 
                 

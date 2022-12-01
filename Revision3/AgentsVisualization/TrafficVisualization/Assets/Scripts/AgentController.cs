@@ -48,8 +48,8 @@ public class AgentController : MonoBehaviour
     bool updated = false, started = false;
 
     public GameObject agentPrefab, floor;
-    public int NAgents, width, height;
-    public float timeToUpdate = 5.0f;
+    public int NAgents;
+    public float timeToUpdate = 1.0f;
     private float timer, dt;
 
     void Start()
@@ -62,8 +62,8 @@ public class AgentController : MonoBehaviour
 
         agents = new Dictionary<string, GameObject>();
 
-        floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
-        floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
+        //floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
+        //floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
         
         timer = timeToUpdate;
 
