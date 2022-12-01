@@ -2,9 +2,9 @@ Pendientes.
 Objetivo: Que el vehiculo llegue a su destino
 
 Inconvenientes:
-1-Le va a hacer caso a los objetos del road
-2-Hay que enseñarle la mejor forma de llegar
-3-Los vehiculos van a chocar
+2.-Los coches en el Unity: 
+    * se desfasan con el grid 
+    * y atraviesan las paredes y los edificos.
 
 Soluciones: 
 Hacer simbolos nuevos para las intersecciones y cambios de carril
