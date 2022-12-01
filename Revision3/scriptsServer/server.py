@@ -44,7 +44,7 @@ def getAgents():
             for i in range(len(N)):
                 if isinstance(N[i], Car):
                     agentPositions.append({"id": str(N[i].unique_id), "x": x, "y":1, "z":y})
-
+        
         return jsonify({'positions':agentPositions})
 
 """

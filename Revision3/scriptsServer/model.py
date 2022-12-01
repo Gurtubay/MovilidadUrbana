@@ -110,9 +110,13 @@ class RandomModel(Model):
             for agent in self.traffic_lights:
                 agent.state = not agent.state
 
-        elif self.schedule.steps % 1 == 0:
+        elif self.schedule.steps % 3 == 0:
             if self.num_agents > 0:
+                #self.num_agents = self.arigato
+                #self.occupied = []
                 self.addCar()
+
+                
         self.schedule.step()
 
     def addCar(self):
@@ -524,8 +528,10 @@ class RandomModel(Model):
         #print("\nLos valores finales de la grafica son los siguientes:")
         #rutas.imprimirGrafica()           
         #print(rutas.imprimir_matriz(rutas.matriz))  
-
+        
+        self.occupied = []
         for i in range(min(self.num_agents,16)) :
+            
             pos_0 = (0,0)
             pos_1 = (0,1)
             pos_2 = (1,0)
@@ -555,8 +561,9 @@ class RandomModel(Model):
                 counter += 1
                 posInicial = random.choice(position)
                 if counter > 250:
-                    counter = 0
-                    self.arigato += 1
+                    break
+            
+            print(f"arigatooooPAPA{self.arigato}")
                     
             rutas.dijkstra((posInicial))     
             car = Car(self.next_id(),self, destination, rutas)
