@@ -57,6 +57,7 @@ def getSemaforos():
 
         return jsonify({'positions':carPositions})
 """
+
 @app.route('/update', methods=['GET'])
 def updateModel():
     global currentStep, randomModel
