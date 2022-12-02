@@ -23,6 +23,7 @@ class Car(Agent):
         self.reachVertice = 0
         self.vision=[(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0)]
         self.breakLights=False
+        self.isAlive=True
         #self.knowledge1=[(pos),obj] <- SENSORES
         
     def justMoveIf(self):
@@ -182,12 +183,16 @@ class Car(Agent):
         if self.Waze[0][self.reachVertice] == self.destination:
             if self.pos[0]==self.destination[0]+1 and self.pos[1]==self.destination[1]+1:
                 self.model.grid.move_agent(self,(x0-1,y0-1))
+                self.lastDirection=="Arrive"
             elif self.pos[0]==self.destination[0]-1 and self.pos[1]==self.destination[1]-1:
                 self.model.grid.move_agent(self,(x0+1,y0+1))
+                self.lastDirection=="Arrive"
             elif self.pos[0]==self.destination[0]-1 and self.pos[1]==self.destination[1]+1:
                 self.model.grid.move_agent(self,(x0+1,y0-1))
+                self.lastDirection=="Arrive"
             elif self.pos[0]==self.destination[0]+1 and self.pos[1]==self.destination[1]-1:
                 self.model.grid.move_agent(self,(x0-1,y0+1))
+                self.lastDirection=="Arrive"
             else:
                 #print("Ultima recta!!!!!!")
                 if (self.pos[0]==self.Waze[0][self.reachVertice][0]-1 or self.pos[0]==self.Waze[0][self.reachVertice][0]+1) and self.pos[1]-self.Waze[0][self.reachVertice][1]<0:
@@ -320,8 +325,8 @@ class Car(Agent):
 #         print(self.destination)
         if self.pos==self.destination:
             ##Aqui se destruye el objeto
-            self.model.grid.remove_agent(self)
-            self.model.schedule.remove(self)
+            self.isAlive=False
+
         else:
             self.move()
 

@@ -48,7 +48,7 @@ with open('2022_base.txt',"r") as baseFile:
     height = len(lines)
 
 
-model_params = {"N":16}
+model_params = {"N":200}
 
 
 print(width, height)
