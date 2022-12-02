@@ -45,7 +45,7 @@ def getAgents():
                     agentPositions.append({"id": str(N[i].unique_id), "x": x, "y":1, "z":y})
         
         return jsonify({'positions':agentPositions})
-
+"""
 @app.route('/getStates', methods=['GET'])
 def getAgents():
     global randomModel
@@ -60,7 +60,7 @@ def getAgents():
                     agentStates.append({"id": str(N[i].unique_id), "state":state})
         
         return jsonify({'states':agentStates})
-
+"""
 @app.route('/update', methods=['GET'])
 def updateModel():
     global currentStep, randomModel

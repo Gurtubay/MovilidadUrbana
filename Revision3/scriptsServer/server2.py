@@ -47,11 +47,9 @@ with open('2022_base.txt',"r") as baseFile:
     width = len(lines[0])-1
     height = len(lines)
 
-#<<<<<<< HEAD
-model_params = {"N":150}
-#=======
-#model_params = {"N":100}
-#>>>>>>> ff0e5b3996d75c4e98ed8e8d0422263422932db8
+
+model_params = {"N":50}
+
 
 print(width, height)
 grid = CanvasGrid(agent_portrayal, width, height, 500, 500)

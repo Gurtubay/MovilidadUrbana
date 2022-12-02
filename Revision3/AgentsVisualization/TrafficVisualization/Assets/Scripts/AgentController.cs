@@ -108,7 +108,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetAgentsData());
-            StartCoroutine(getStates());
+            //StartCoroutine(getStates());
         }
     }
 
@@ -134,7 +134,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetAgentsData());
             Debug.Log("Getting States");
-            StartCoroutine(GetStates());
+            //StartCoroutine(GetStates());
 
         }
     }
@@ -172,7 +172,7 @@ public class AgentController : MonoBehaviour
             if(!started) started = true;
         }
     }
-    
+    /*
     IEnumerator GetStates() 
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getStates);
@@ -192,5 +192,6 @@ public class AgentController : MonoBehaviour
             }
         }
     }
+    */
     
 }
