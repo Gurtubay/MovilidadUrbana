@@ -4,6 +4,7 @@ from mesa.space import MultiGrid
 from agent import *
 import json
 import math
+
 class Vertice:
     """Clase que define los vertices de los grafos"""
     def __init__(self,i):
@@ -16,18 +17,30 @@ class Vertice:
     def agregarVecino(self,v,p):
         if v not in self.vecinos:
             self.vecinos.append([v,p])
+            
+    def modificarVecino(self,v,p):
+        for i in range len(vecinos):
+            if vecinos[0]==v:
+                vecinos[1]+=p
     
 class Grafica:
     """Clase que define los vertices de las graficas"""
     def __init__(self):
         self.vertices={}
         self.listaVertices=[]
-    
+        
+    """Funcion que agrega los vertices"""
     def agregarVertice(self,id):
         if id not in self.vertices:
             self.vertices[id]=Vertice(id)
             self.listaVertices.append(id)
     
+    """Funcion que agrega peso segun el agente lo decida"""
+    def agregarPeso(self,a,b,p):
+        if a in self.vertices and b in self.vertices:
+            self.vertices[a].modificarVecino(b,p)
+    
+    """Funcion que agrega las aristas entre vertices"""
     def agregarArista(self,a,b,p):
         if a in self.vertices and b in self.vertices:
             self.vertices[a].agregarVecino(b,p)
@@ -37,11 +50,12 @@ class Grafica:
             #print("Peso: " + str(p))
             
             
-        
+    """Funcion que imprime el grafo"""
     def imprimirGrafica(self):
         for v in self.vertices:
             print("La distancia del vertice "+str(v)+" es "+ str(self.vertices[v].distancia)+" llegando desde "+str(self.vertices[v].padre))
-            
+    
+    """Funcion que regresa una lista con vertices para el camino mas corto"""
     def camino(self,a,b):
         camino=[]
         actual=b
@@ -50,6 +64,7 @@ class Grafica:
             actual=self.vertices[actual].padre
         return [camino, self.vertices[b].distancia]
     
+    """Funcion necesaria para determinar los caminos mas cortos"""
     def minimo(self,lista):
         if len(lista)>0:
             m= self.vertices[lista[0]].distancia
@@ -59,7 +74,8 @@ class Grafica:
                     m=self.vertices[e].distancia
                     v=e
             return v
-            
+    
+    """Algoritmo de Dijstra"""
     def dijkstra(self,a):
         if a in self.vertices:
             self.vertices[a].distancia=0
@@ -87,7 +103,7 @@ class Grafica:
         else:
             return False
         
-
+"""Esta es la clase del modelo donde se inicializaran los agentes en nuestro ambiente"""
 class RandomModel(Model):
     """ 
     Creates a new model with random agents.
@@ -121,7 +137,9 @@ class RandomModel(Model):
 
                 
         self.schedule.step()
-
+    
+    
+    """Funcion para agregar intermitetemente a los vehiculos"""
     def addCar(self):
         
         #self.rutas = Grafo(self.next_id,self)
@@ -168,7 +186,7 @@ class RandomModel(Model):
             for r, row in enumerate(lines):
                 for c, col in enumerate(row):
                     """
-                    Para las intersecciones generar simbolos nuevos y declararlos en el modelo y el txt 2022_base y en el json
+                    Aqui esta contenida la logica para leer el archivo txt con los simbolos analogos a la ciudad y agregarlos al grid
                     """
                     if col in ["v", "^", ">", "<","$","&","%","*"]:
                         agent = Road(f"r_{r*self.width+c}", self, dataDictionary[col])
@@ -198,7 +216,10 @@ class RandomModel(Model):
                         listInt.append("Destination")
 
         #Lista nombre Intersecciones listInt
-
+        """
+        Aqui se defina la logica que agregara los aristas con su respectivo peso del grafo, donde cada vertice corresponde a una interseccion del mapa o bien un destino y ademas
+        asigna los pesos entre los vertices que corresponde a la distancia entre un vertice y otro
+        """
         for i in self.rutas.listaVertices:
             listaX.append(i[0])
             listaY.append(i[1])
@@ -536,7 +557,9 @@ class RandomModel(Model):
         #print("\nLos valores finales de la grafica son los siguientes:")
         #self.rutas.imprimirGrafica()           
         #print(self.rutas.imprimir_matriz(self.rutas.matriz))  
-        
+    """
+    Aqui se definen las posiciones iniciales de los vehiculos para ser generados posteriormente por la funcion de arriba
+    """
     def Ronda(self):
         self.occupied = []
         for i in range(min(self.num_agents,16)) :

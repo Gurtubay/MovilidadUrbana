@@ -3,10 +3,14 @@ from mesa import Agent
 
 class Car(Agent):
     """
-    Agent that moves randomly.
+    Agente automovil, se mueve con el algoritmo de Dijkstra al destino
     Attributes:
         unique_id: Agent's ID 
-        direction: Randomly chosen direction chosen from one of eight directions
+        lastDirection ->Hacia donde se esta moviendo el coche
+        rutas: Grafo de navegacion
+        Waze: Ruta mas corta por Dijkstra
+        Vision: Sensores del coche que alojan las posiciones que puede ver
+        reachVertice: Lleva la cuenta de los vertices de su ruta
     """
     def __init__(self, unique_id, model,des, rutas):
         """
@@ -22,10 +26,12 @@ class Car(Agent):
         self.Waze = self.rutas.camino(self.pos,self.destination)
         self.reachVertice = 0
         self.vision=[(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0)]
-        self.breakLights=False
         self.isAlive=True
         #self.knowledge1=[(pos),obj] <- SENSORES
-        
+     
+    """
+    Funcion que le permite determinar al agente si debe moverse o no para no chocar con otros coches
+    """
     def justMoveIf(self):
         outIndex=False
         outIndex1=False
@@ -105,7 +111,9 @@ class Car(Agent):
             elif (len(cocheDelante)==0 and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Right") and self.lastDirection=="Down") or self.pos in rotondaPos:
                 return True
         
-        
+    """
+    Funcion que asigna constantemente las posiciones de sus sensores segun se mueva el agente
+    """
     def setVision(self):
         if self.lastDirection=="Left":
             self.vision[0]=(self.pos[0]-1,self.pos[1])
@@ -159,7 +167,9 @@ class Car(Agent):
             self.vision[9]=(self.pos[0]+1,self.pos[1])
             self.vision[10]=(self.pos[0]-1,self.pos[1])
             
-        
+    """
+    Funcion que contiene la logica del movimiento del automovil y permite observar el color del semaforo
+    """
     def move(self):
         """ 
         Determines if the agent can move in the direction that was chosen
@@ -319,31 +329,40 @@ class Car(Agent):
 
     def step(self):
         """ 
-        Determines the new direction it will take, and then moves
+        Funcion step
         """
         self.setVision()
 #         print(self.destination)
         if self.pos==self.destination:
             ##Aqui se destruye el objeto
             self.isAlive=False
-
+            #self.model.grid.remove_agent(self)
+            #self.model.schedule.remove(self)
         else:
             self.move()
 
+    """
+    Agente Semaforo, cambia de estado para decirle a los vehiculos cuando pueden pasar.
+    Attributes:
+        unique_id: Agent's ID 
+        state ->Los estados de las diferenes luces del semaforos
+        countStep: Lleva la cuenta de cuantos 
+        Waze: Ruta mas corta por Dijkstra
+        Vision: Sensores del coche que alojan las posiciones que puede ver
+        reachVertice: Lleva la cuenta de los steps que llevan parados los coches en el semaforo en rojo
+        vision: Especifica las posiciones que el semaforo conoce
+        neighbour: Lista que aloja los semaforos que comparten interseccion
+        borther: Aloja un objeto semaforo que es el que esta junto al mismo
+        carsPool: Lleva la cuenta de cuantos coches puede ver
+        peso: Variable que determina cuando el semaforo cambiara de rojo a verde y viceversa
+    """
 class Traffic_Light(Agent):
     """
     Traffic light. Where the traffic lights are in the grid.
     """
     def __init__(self, unique_id, model, state = "red",roadMap=[]):
         super().__init__(unique_id, model)
-        """
-        Creates a new Traffic light.
-        Args:
-            unique_id: The agent's ID
-            model: Model reference for the agent
-            state: Whether the traffic light is green or red
-            timeToChange: After how many step should the traffic light change color 
-        """
+
         
         self.state = state
         self.countStep = 0
@@ -356,7 +375,10 @@ class Traffic_Light(Agent):
         self.weight=1
 #         if self.state == "red":
 #             self.currentStep = 10
-        
+     
+    """
+    Funcion con la logica de cambio de estado de los semaforos
+    """
     def ampelLogic(self):
         position =self.model.grid.get_cell_list_contents(self.vision[0])
         carWaiting1=[obj for obj in position if isinstance(obj,Car)]
@@ -535,7 +557,9 @@ class Traffic_Light(Agent):
                 self.neighbour[1].weight=1
             
         
-        
+    """
+    Funcion que corre una vez y determina las posiciones que el semaforo podra sensar
+    """
     def setSensor(self):
         if [(self.pos[0]+1, self.pos[1]), "Left"] in self.roadMap:
             self.vision[0]=(self.pos[0]+1, self.pos[1])
@@ -927,27 +951,12 @@ class Traffic_Light(Agent):
         if self.countStep==0:
             self.setSensor()
             countStep=1
-        self.ampelLogic()
-        
-        """
-        self.sema1=[(0,15),(0,16),(0,17)]
-        self.cont=0
-        "To change the state (green or red) of the traffic light in case you consider the time to change of each traffic light."
-        if self.unique_id == "tl_18" or self.unique_id == "tl_42" or self.unique_id == "tl_64" or self.unique_id == "tl_65":
-            self.currentStep += 1
-            if self.currentStep == 8:
-                self.state = "yellow"
-            elif self.currentStep == 10:
-                self.state = "red"
-            elif self.currentStep == 20:
-                self.currentStep = 0
-                self.state= "green"
-                """
+        self.ampelLogic()        
 
 
 class Destination(Agent):
     """
-    Destination agent. Where each car should go.
+    Agente Destino .Adonde cada agente coche tiene que ir
     """
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
@@ -957,7 +966,7 @@ class Destination(Agent):
 
 class Obstacle(Agent):
     """
-    Obstacle agent. Just to add obstacles to the grid.
+    Agente Obstaculo. Esta sera analogo a los edificios de la ciudad
     """
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
@@ -965,9 +974,10 @@ class Obstacle(Agent):
     def step(self):
         pass
 
+
 class Road(Agent):
     """
-    Road agent. Determines where the cars can move, and in which direction.
+    Agente Road: Determina las posibles direcciones en las que se puede mover el coche
     """
     def __init__(self, unique_id, model, direction= "Left"):
         """
