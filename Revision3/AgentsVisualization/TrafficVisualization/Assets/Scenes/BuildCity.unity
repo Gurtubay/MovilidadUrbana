@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.3556888, g: 0.35026386, b: 0.374037, a: 1}
+  m_IndirectSpecularColor: {r: 0.3556889, g: 0.35026392, b: 0.3740371, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -332,7 +332,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agentPrefab: {fileID: 8631590404560204573, guid: 0420f394461dea74fb1eb500f843edc9, type: 3}
   floor: {fileID: 1457529882}
-  NAgents: 5
+  semaforoPrefab: {fileID: 1244092711701336, guid: 723ced9a1fcf7aa48acb0db6309b7b0f, type: 3}
+  NAgents: 16
   timeToUpdate: 1
 --- !u!4 &994314423
 Transform:
@@ -382,7 +383,7 @@ MonoBehaviour:
   roadPrefab: {fileID: 3240343348373693069, guid: 646fc54ff3078ce94bbdbd0f0d4c4a05, type: 3}
   obstaclePrefab: {fileID: 1212380520111254, guid: 562df8355904213468a690c4ce6740b6, type: 3}
   destinationPrefab: {fileID: 466902165752306224, guid: ba7d5275d44843e43ab33b8efdd2e707, type: 3}
-  semaphorePrefab: {fileID: 1244092711701336, guid: 723ced9a1fcf7aa48acb0db6309b7b0f, type: 3}
+  semaphorePrefab: {fileID: 3240343348373693069, guid: 646fc54ff3078ce94bbdbd0f0d4c4a05, type: 3}
   floorPrefab: {fileID: 1247173097211460, guid: 58c82ce0260d48d409299732c6345af2, type: 3}
   tileSize: 1
 --- !u!4 &1457529884

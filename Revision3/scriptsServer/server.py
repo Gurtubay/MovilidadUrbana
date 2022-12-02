@@ -45,22 +45,21 @@ def getAgents():
                     agentPositions.append({"id": str(N[i].unique_id), "x": x, "y":1, "z":y})
         
         return jsonify({'positions':agentPositions})
-"""
+
 @app.route('/getStates', methods=['GET'])
-def getAgents():
+def getStates():
     global randomModel
 
     if request.method == 'GET':
         # agentPositions = []
         agentStates =[]
-        for(N,state) in randomModel.grid.coord_iter():
+        for(N,x, y) in randomModel.grid.coord_iter():
             for i in range(len(N)):
-                if isinstance(N[i], Car):
-                   # agentPositions.append({"id": str(N[i].unique_id), "x": x, "y":1, "z":y})
-                    agentStates.append({"id": str(N[i].unique_id), "state":state})
+                if isinstance(N[i], Traffic_Light):
+                    agentStates.append({"id": str(N[i].unique_id),"x": x, "y":1, "z":y,"state":N[i].state})
         
         return jsonify({'states':agentStates})
-"""
+
 @app.route('/update', methods=['GET'])
 def updateModel():
     global currentStep, randomModel

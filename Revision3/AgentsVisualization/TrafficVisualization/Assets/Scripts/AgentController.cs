@@ -23,7 +23,21 @@ public class AgentData
         this.z = z;
     }
 }
-
+[Serializable]
+public class StateData
+{
+    public string id;
+    public string state;
+    public float x, y, z;
+    public StateData(string id, string state, float x, float y, float z)
+    {
+        this.id = id;
+        this.state = state;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+}
 [Serializable]
 
 public class AgentsData
@@ -31,6 +45,15 @@ public class AgentsData
     public List<AgentData> positions;
 
     public AgentsData() => this.positions = new List<AgentData>();
+}
+
+[Serializable]
+
+public class StatesData
+{
+    public List<StateData> states;
+
+    public StatesData() => this.states = new List<StateData>();
 }
 
 public class AgentController : MonoBehaviour
@@ -42,26 +65,31 @@ public class AgentController : MonoBehaviour
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     AgentsData agentsData;
+    StatesData statesData;
     Dictionary<string, GameObject> agents;
+    Dictionary<string, GameObject> semaforo;
     Dictionary<string, Vector3> prevPositions, currPositions;
+    Dictionary<string, string> colores;
 
     bool updated = false, started = false;
 
-    public GameObject agentPrefab, floor;
+    public GameObject agentPrefab, floor, semaforoPrefab;
     public int NAgents;
     public float timeToUpdate = 1.0f;
     private float timer, dt;
 
+
     void Start()
     {
         agentsData = new AgentsData();
-        
+        statesData = new StatesData();
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
 
         agents = new Dictionary<string, GameObject>();
+        semaforo = new Dictionary<string, GameObject>();
+        colores = new Dictionary<string, string>();
 
-        
         timer = timeToUpdate;
 
         StartCoroutine(SendConfiguration());
@@ -92,9 +120,22 @@ public class AgentController : MonoBehaviour
                 agents[agent.Key].transform.localPosition = interpolated;
                 if(direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction);
             }
-
-            // float t = (timer / timeToUpdate);
-            // dt = t * t * ( 3f - 2f*t);
+            foreach(var color in colores)
+            {
+               if (color.Value == "yellow")
+                {
+                    semaforo[color.Key].GetComponent<Renderer>().materials[0].color = Color.yellow;
+                }
+               if (color.Value == "green")
+               {
+                   semaforo[color.Key].GetComponent<Renderer>().materials[0].color = Color.green;
+               }
+                if (color.Value == "red")
+                {
+                    semaforo[color.Key].GetComponent<Renderer>().materials[0].color = Color.red;
+                }
+            }
+        
         }
     }
  
@@ -108,7 +149,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetAgentsData());
-            //StartCoroutine(getStates());
+            StartCoroutine(GetStates());
         }
     }
 
@@ -134,7 +175,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetAgentsData());
             Debug.Log("Getting States");
-            //StartCoroutine(GetStates());
+            StartCoroutine(GetStates());
 
         }
     }
@@ -168,11 +209,10 @@ public class AgentController : MonoBehaviour
                     }
             }
 
-            updated = true;
-            if(!started) started = true;
+           
         }
     }
-    /*
+    
     IEnumerator GetStates() 
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getStates);
@@ -182,16 +222,25 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else 
         {
-            stateData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
+            statesData = JsonUtility.FromJson<StatesData>(www.downloadHandler.text);
 
-            Debug.Log(stateData.positions);
-
-            foreach(AgentData state in stateData.positions)
+            foreach (StateData agent in statesData.states)
             {
-                Instantiate(obstaclePrefab, new Vector3(obstacle.x, obstacle.y, obstacle.z), Quaternion.identity);
+                Vector3 newAgentPosition = new Vector3(agent.x, agent.y-1, agent.z);
+
+                if (!started)
+                {
+                    semaforo[agent.id] = Instantiate(semaforoPrefab, newAgentPosition, Quaternion.identity);
+                }
+                else
+                {
+                    colores[agent.id] = agent.state;
+                }
             }
         }
+        updated = true;
+        if (!started) started = true;
     }
-    */
+    
     
 }
