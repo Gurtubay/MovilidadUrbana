@@ -29,6 +29,29 @@ class Car(Agent):
         outIndex=False
         outIndex1=False
         outIndex2=False
+        backAmpel=False
+        rotondaPos=[(12,11),(13,11),(17,11),(18,11),(12,9),(13,9),(17,9),(18,9)]
+        if self.lastDirection=="Left":
+            position =self.model.grid.get_cell_list_contents([self.pos])
+            goOrStop = [obj for obj in position if isinstance(obj,Traffic_Light)]
+            if len(goOrStop)>0:
+                backAmpel=True
+        elif self.lastDirection=="Right":
+            position =self.model.grid.get_cell_list_contents([self.pos])
+            goOrStop = [obj for obj in position if isinstance(obj,Traffic_Light)]
+            if len(goOrStop)>0:
+                backAmpel=True
+        elif self.lastDirection=="Down":
+            position =self.model.grid.get_cell_list_contents([self.pos])
+            goOrStop = [obj for obj in position if isinstance(obj,Traffic_Light)]
+            if len(goOrStop)>0:
+                backAmpel=True
+        elif self.lastDirection=="Up":
+            position =self.model.grid.get_cell_list_contents([self.pos])
+            goOrStop = [obj for obj in position if isinstance(obj,Traffic_Light)]
+            if len(goOrStop)>0:
+                backAmpel=True
+            
         if self.vision[0][0]>=0 and self.vision[0][0] <=23 and self.vision[0][1] >=0 and self.vision[0][1] <=24:
             position =self.model.grid.get_cell_list_contents(self.vision[0])
             cocheDelante=[obj for obj in position if isinstance(obj,Car)]
@@ -45,33 +68,33 @@ class Car(Agent):
             outIndex2=True
             
         if outIndex and outIndex1 and outIndex2:    
-            if len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Down") and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Up") and self.lastDirection=="Right":
+            if (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Down") and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Up") and self.lastDirection=="Right") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Down") and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Up") and self.lastDirection=="Left":
+            elif (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Up") and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Down") and self.lastDirection=="Left") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and self.lastDirection=="Up":
+            elif (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Right") and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Left") and self.lastDirection=="Up") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and self.lastDirection=="Down":
+            elif (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Left") and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Right") and self.lastDirection=="Down") or self.pos in rotondaPos:
                 return True
             
         elif outIndex and outIndex1:
-            if len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Down") and self.lastDirection=="Right":
+            if (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Down") and self.lastDirection=="Right") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Down") and self.lastDirection=="Left":
+            elif (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Up") and self.lastDirection=="Left") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and self.lastDirection=="Up":
+            elif (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Right") and self.lastDirection=="Up") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and self.lastDirection=="Down":
+            elif (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Left") and self.lastDirection=="Down") or self.pos in rotondaPos:
                 return True
             
         elif outIndex and outIndex2:
-            if len(cocheDelante)==0 and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Up") and self.lastDirection=="Right":
+            if (len(cocheDelante)==0 and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Up") and self.lastDirection=="Right") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Up") and self.lastDirection=="Left":
+            elif (len(cocheDelante)==0 and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Down") and self.lastDirection=="Left") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and self.lastDirection=="Up":
+            elif (len(cocheDelante)==0 and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Left") and self.lastDirection=="Up") or self.pos in rotondaPos:
                 return True
-            elif len(cocheDelante)==0 and self.lastDirection=="Down":
+            elif (len(cocheDelante)==0 and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Right") and self.lastDirection=="Down") or self.pos in rotondaPos:
                 return True
         
         
@@ -269,30 +292,26 @@ class Car(Agent):
 
         else:
             #LastDir para Left, Right, Up, Down
-            if self.lastDirection=="Left" and goOrStop[0].state:
+            if self.lastDirection=="Left" and goOrStop[0].state=="green":
                 if self.justMoveIf():
                     self.model.grid.move_agent(self,(x0-1,y0))
-            elif self.lastDirection=="Right" and goOrStop[0].state:
+            elif self.lastDirection=="Right" and goOrStop[0].state=="green":
                 if self.justMoveIf():
                     self.model.grid.move_agent(self,(x0+1,y0))
-            elif self.lastDirection=="Up" and goOrStop[0].state:
+            elif self.lastDirection=="Up" and goOrStop[0].state=="green":
                 if self.justMoveIf():
                     self.model.grid.move_agent(self,(x0,y0+1))
-            elif self.lastDirection=="Down" and goOrStop[0].state:
+            elif self.lastDirection=="Down" and goOrStop[0].state=="green":
                 if self.justMoveIf():
                     self.model.grid.move_agent(self,(x0,y0-1))
 
-    def choque(self):
-        a = 0
-        #if self.pos == next_agent.pos:
-            #
 
     def step(self):
         """ 
         Determines the new direction it will take, and then moves
         """
         self.setVision()
-        print(self.destination)
+#         print(self.destination)
         if self.pos==self.destination:
             ##Aqui se destruye el objeto
             print("Prueba XD")
@@ -303,7 +322,7 @@ class Traffic_Light(Agent):
     """
     Traffic light. Where the traffic lights are in the grid.
     """
-    def __init__(self, unique_id, model, state = False, timeToChange = 5):
+    def __init__(self, unique_id, model, state = "red",roadMap=[]):
         super().__init__(unique_id, model)
         """
         Creates a new Traffic light.
@@ -315,15 +334,595 @@ class Traffic_Light(Agent):
         """
         
         self.state = state
-        self.timeToChange = timeToChange
+        self.countStep = 0
+        self.unique_id = unique_id
+        self.vision=[(0,0),(0,0),(0,0)]
+        self.roadMap=roadMap
+        self.neighbour=[]
+        self.brother=None
+        self.carsPool=0
+        self.weight=1
+#         if self.state == "red":
+#             self.currentStep = 10
+        
+    def ampelLogic(self):
+        print(self.pos)
+        print(self.vision[0])
+        position =self.model.grid.get_cell_list_contents(self.vision[0])
+        carWaiting1=[obj for obj in position if isinstance(obj,Car)]
+        position =self.model.grid.get_cell_list_contents(self.vision[1])
+        carWaiting2=[obj for obj in position if isinstance(obj,Car)]
+        position =self.model.grid.get_cell_list_contents(self.vision[2])
+        carWaiting3=[obj for obj in position if isinstance(obj,Car)]
+            
+        if self.state=="yellow" and self.neighbour[0].state=="yellow" and len(carWaiting3)>0:
+            self.state="red"
+            self.brother.state="green"
+            self.neighbour[0].state="red"
+            self.neighbour[1].state="red"
+            self.carsPool=1
+            
+        elif self.state=="red" and self.neighbour[0].carsPool==0 and self.neighbour[1].carsPool==0:
+            if self.carsPool==0 and self.brother.carsPool==0:
+                self.state="yellow"
+                self.brother.state="yellow"
+                self.neighbour[0].state="yellow"
+                self.neighbour[1].state="yellow"               
+            else:
+                self.state="green"
+                self.brother.state="green"
+                self.neighbour[0].state="red"
+                self.neighbour[1].state="red"
+                self.countStep=1
+                self.neighbour[0].weight=1
+                self.neighbour[1].weight=1
+            
+        elif len(carWaiting1)==0 and len(carWaiting2)==0 and len(carWaiting3)==0:
+            self.carsPool=0
+            
+        elif len(carWaiting1)==1 and len(carWaiting2)==1 and len(carWaiting3)==1 and self.state=="green":
+            self.carsPool=3
+            position =self.model.grid.get_cell_list_contents(self.pos)
+            carPassing=[obj for obj in position if isinstance(obj,Car)]
+            if len(carPassing)>0:
+                self.weight-=1
+        elif len(carWaiting1)==1 and len(carWaiting2)==0 and len(carWaiting3)==1 and self.state=="green":
+            self.carsPool=2
+            position =self.model.grid.get_cell_list_contents(self.pos)
+            carPassing=[obj for obj in position if isinstance(obj,Car)]
+            if len(carPassing)>0:
+                self.weight-=1
+        elif len(carWaiting1)==1 and len(carWaiting2)==1 and len(carWaiting3)==0 and self.state=="green":
+            self.carsPool=2
+            position =self.model.grid.get_cell_list_contents(self.pos)
+            carPassing=[obj for obj in position if isinstance(obj,Car)]
+            if len(carPassing)>0:
+                self.weight-=1
+        elif len(carWaiting1)==0 and len(carWaiting2)==1 and len(carWaiting3)==1 and self.state=="green":
+            self.carsPool=2
+            position =self.model.grid.get_cell_list_contents(self.pos)
+            carPassing=[obj for obj in position if isinstance(obj,Car)]
+            if len(carPassing)>0:
+                self.weight-=1
+        elif len(carWaiting1)==0 and len(carWaiting2)==0 and len(carWaiting3)==1 and self.state=="green":
+            self.carsPool=1
+            position =self.model.grid.get_cell_list_contents(self.pos)
+            carPassing=[obj for obj in position if isinstance(obj,Car)]
+            if len(carPassing)>0:
+                self.weight-=1
+        elif len(carWaiting1)==0 and len(carWaiting2)==1 and len(carWaiting3)==0 and self.state=="green":
+            self.carsPool=1
+            position =self.model.grid.get_cell_list_contents(self.pos)
+            carPassing=[obj for obj in position if isinstance(obj,Car)]
+            if len(carPassing)>0:
+                self.weight-=1
+        elif len(carWaiting1)==1 and len(carWaiting2)==0 and len(carWaiting3)==0 and self.state=="green":
+            self.carsPool=1
+            position =self.model.grid.get_cell_list_contents(self.pos)
+            carPassing=[obj for obj in position if isinstance(obj,Car)]
+            if len(carPassing)>0:
+                self.weight-=1
+            
+        elif len(carWaiting1)==1 and len(carWaiting2)==1 and len(carWaiting3)==1 and self.state=="red":
+            self.carsPool=3
+            self.weight+=self.carsPool*self.countStep
+            self.countStep+=1
+            if self.weight+self.brother.weight>=self.neighbour[0].weight+self.neighbour[1].weight:
+                self.state="green"
+                self.brother.state="green"
+                self.neighbour[0].state="red"
+                self.neighbour[1].state="red"
+                self.countStep=1
+                self.neighbour[0].weight=1
+                self.neighbour[1].weight=1
+        elif len(carWaiting1)==1 and len(carWaiting2)==0 and len(carWaiting3)==1 and self.state=="red":
+            self.carsPool=2
+            self.weight+=self.carsPool*self.countStep
+            self.countStep+=1
+            if self.weight+self.brother.weight>=self.neighbour[0].weight+self.neighbour[1].weight:
+                self.state="green"
+                self.brother.state="green"
+                self.neighbour[0].state="red"
+                self.neighbour[1].state="red"
+                self.countStep=1
+                self.neighbour[0].weight=1
+                self.neighbour[1].weight=1
+        elif len(carWaiting1)==1 and len(carWaiting2)==1 and len(carWaiting3)==0 and self.state=="red":
+            self.carsPool=2
+            self.weight+=self.carsPool*self.countStep
+            self.countStep+=1
+            if self.weight+self.brother.weight>=self.neighbour[0].weight+self.neighbour[1].weight:
+                self.state="green"
+                self.brother.state="green"
+                self.neighbour[0].state="red"
+                self.neighbour[1].state="red"
+                self.countStep=1
+                self.neighbour[0].weight=1
+                self.neighbour[1].weight=1
+        elif len(carWaiting1)==0 and len(carWaiting2)==1 and len(carWaiting3)==1 and self.state=="red":
+            self.carsPool=2
+            self.weight+=self.carsPool*self.countStep
+            self.countStep+=1
+            if self.weight+self.brother.weight>=self.neighbour[0].weight+self.neighbour[1].weight:
+                self.state="green"
+                self.brother.state="green"
+                self.neighbour[0].state="red"
+                self.neighbour[1].state="red"
+                self.countStep=1
+                self.neighbour[0].weight=1
+                self.neighbour[1].weight=1
+        elif len(carWaiting1)==0 and len(carWaiting2)==0 and len(carWaiting3)==1 and self.state=="red":
+            self.carsPool=1
+            self.weight+=self.carsPool*self.countStep
+            self.countStep+=1
+            print(self.brother)
+            print(self.neighbour[0])
+            print(self.neighbour[1])
+            print(self.brother)
+            if self.weight+self.brother.weight>=self.neighbour[0].weight+self.neighbour[1].weight:
+                self.state="green"
+                self.brother.state="green"
+                self.neighbour[0].state="red"
+                self.neighbour[1].state="red"
+                self.countStep=1
+                self.neighbour[0].weight=1
+                self.neighbour[1].weight=1
+        elif len(carWaiting1)==0 and len(carWaiting2)==1 and len(carWaiting3)==0 and self.state=="red":
+            self.carsPool=1
+            self.weight+=self.carsPool*self.countStep
+            self.countStep+=1
+            if self.weight+self.brother.weight>=self.neighbour[0].weight+self.neighbour[1].weight:
+                self.state="green"
+                self.brother.state="green"
+                self.neighbour[0].state="red"
+                self.neighbour[1].state="red"
+                self.countStep=1
+                self.neighbour[0].weight=1
+                self.neighbour[1].weight=1
+        elif len(carWaiting1)==1 and len(carWaiting2)==0 and len(carWaiting3)==0 and self.state=="red":
+            self.carsPool=1
+            self.weight+=self.carsPool*self.countStep
+            self.countStep+=1
+            if self.weight+self.brother.weight>=self.neighbour[0].weight+self.neighbour[1].weight:
+                self.state="green"
+                self.brother.state="green"
+                self.neighbour[0].state="red"
+                self.neighbour[1].state="red"
+                self.countStep=1
+                self.neighbour[0].weight=1
+                self.neighbour[1].weight=1
+            
+        
+        
+    def setSensor(self):
+        if [(self.pos[0]+1, self.pos[1]), "Left"] in self.roadMap:
+            self.vision[0]=(self.pos[0]+1, self.pos[1])
+            self.vision[1]=(self.pos[0]+2, self.pos[1])
+            self.vision[2]=(self.pos[0]+3, self.pos[1])
+            
+#             Set del hermano
+            if self.pos[0] >=0 and self.pos[1]+1 >=0 and self.pos[0] <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0], self.pos[1]+1))
+                ampelBrother=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelBrother)>0:
+                    self.brother=ampelBrother[0]
+            if self.pos[0] >=0 and self.pos[1]-1 >=0 and self.pos[0] <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0], self.pos[1]-1))
+                ampelBrother=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelBrother)>0:
+                    self.brother=ampelBrother[0]
+                
+#           Arriba Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]+1 >=0 and self.pos[0]+1 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]+1))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#            Arriba Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]+1 >=0 and self.pos[0]-1 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]+1))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+             
+#           Abajo Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]-1 >=0 and self.pos[0]+1 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]-1))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+#           Abajo Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]-1 >=0 and self.pos[0]-1 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]-1))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+#           2 Arriba Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]+2 >=0 and self.pos[0]+1 <=23 and self.pos[1]+2<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+2))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+             
+#           2 Arriba Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]+2 >=0 and self.pos[0]-1 <=23 and self.pos[1]+2<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]+2))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#           2 Abajo Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]-2 >=0 and self.pos[0]+1 <=23 and self.pos[1]+2<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]-2))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#           2 Abajo Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]-2 >=0 and self.pos[0]-1 <=23 and self.pos[1]-2<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]-2))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+        elif [(self.pos[0]-1, self.pos[1]), "Right"] in self.roadMap:
+            self.vision[0]=(self.pos[0]-1, self.pos[1])
+            self.vision[1]=(self.pos[0]-2, self.pos[1])
+            self.vision[2]=(self.pos[0]-3, self.pos[1])
+#             Set del hermano
+            if self.pos[0] >=0 and self.pos[1]+1 >=0 and self.pos[0] <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0], self.pos[1]+1))
+                ampelBrother=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelBrother)>0:
+                    self.brother=ampelBrother[0]
+            if self.pos[0] >=0 and self.pos[1]-1 >=0 and self.pos[0] <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0], self.pos[1]-1))
+                ampelBrother=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelBrother)>0:
+                    self.brother=ampelBrother[0]
+                
+#           Arriba Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]+1 >=0 and self.pos[0]+1 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]+1))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#            Arriba Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]+1 >=0 and self.pos[0]-1 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]+1))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+             
+#           Abajo Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]-1 >=0 and self.pos[0]+1 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]-1))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+#           Abajo Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]-1 >=0 and self.pos[0]-1 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]-1))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+#           2 Arriba Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]+2 >=0 and self.pos[0]+1 <=23 and self.pos[1]+2<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+2))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+             
+#           2 Arriba Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]+2 >=0 and self.pos[0]-1 <=23 and self.pos[1]+2<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]+2))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#           2 Abajo Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]-2 >=0 and self.pos[0]+1 <=23 and self.pos[1]+2<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]-2))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#           2 Abajo Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]-2 >=0 and self.pos[0]-1 <=23 and self.pos[1]-2<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]-2))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
 
+        elif [(self.pos[0], self.pos[1]+1), "Down"] in self.roadMap:
+            self.vision[0]=(self.pos[0], self.pos[1]+1)
+            self.vision[1]=(self.pos[0], self.pos[1]+2)
+            self.vision[2]=(self.pos[0], self.pos[1]+3)
+#             Set del hermano
+            if self.pos[0]+1 >=0 and self.pos[1] >=0 and self.pos[0]+1 <=23 and self.pos[1]<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]))
+                ampelBrother=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelBrother)>0:
+                    self.brother=ampelBrother[0]
+            if self.pos[0]-1 >=0 and self.pos[1] >=0 and self.pos[0]-1 <=23 and self.pos[1]<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]))
+                ampelBrother=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelBrother)>0:
+                    self.brother=ampelBrother[0]
+                
+#           Arriba Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]+1 >=0 and self.pos[0]+1 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#            Arriba Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]+1 >=0 and self.pos[0]-1 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+             
+#           Abajo Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]-1 >=0 and self.pos[0]+1 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+#           Abajo Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]-1 >=0 and self.pos[0]-1 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+#           2 Arriba Derecha
+            if self.pos[0]+2 >=0 and self.pos[1]+1 >=0 and self.pos[0]+2 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+             
+#           2 Arriba Izquierda
+            if self.pos[0]-2 >=0 and self.pos[1]+1 >=0 and self.pos[0]-2 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#           2 Abajo Derecha
+            if self.pos[0]+2 >=0 and self.pos[1]-1 >=0 and self.pos[0]+2 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#           2 Abajo Izquierda
+            if self.pos[0]-2 >=0 and self.pos[1]-1 >=0 and self.pos[0]-2 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+
+        elif [(self.pos[0], self.pos[1]-1), "Up"] in self.roadMap:
+            self.vision[0]=(self.pos[0], self.pos[1]-1)
+            self.vision[1]=(self.pos[0], self.pos[1]-2)
+            self.vision[2]=(self.pos[0], self.pos[1]-3)
+#             Set del hermano
+            if self.pos[0]+1 >=0 and self.pos[1] >=0 and self.pos[0]+1 <=23 and self.pos[1]<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]))
+                ampelBrother=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelBrother)>0:
+                    self.brother=ampelBrother[0]
+            if self.pos[0]-1 >=0 and self.pos[1] >=0 and self.pos[0]-1 <=23 and self.pos[1]<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]))
+                ampelBrother=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelBrother)>0:
+                    self.brother=ampelBrother[0]
+                
+#           Arriba Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]+1 >=0 and self.pos[0]+1 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    print(ampelVecino[0].pos)
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#            Arriba Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]+1 >=0 and self.pos[0]-1 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+             
+#           Abajo Derecha
+            if self.pos[0]+1 >=0 and self.pos[1]-1 >=0 and self.pos[0]+1 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+#           Abajo Izquierda
+            if self.pos[0]-1 >=0 and self.pos[1]-1 >=0 and self.pos[0]-1 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-1, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+            
+#           2 Arriba Derecha
+            if self.pos[0]+2 >=0 and self.pos[1]+1 >=0 and self.pos[0]+2 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+             
+#           2 Arriba Izquierda
+            if self.pos[0]-2 >=0 and self.pos[1]+1 >=0 and self.pos[0]-2 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]+1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]+2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#           2 Abajo Derecha
+            if self.pos[0]+2 >=0 and self.pos[1]-1 >=0 and self.pos[0]+2 <=23 and self.pos[1]+1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]+2, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+                
+#           2 Abajo Izquierda
+            if self.pos[0]-2 >=0 and self.pos[1]-1 >=0 and self.pos[0]-2 <=23 and self.pos[1]-1<=24:
+                position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]-1))
+                ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                if len(ampelVecino)>0:
+                    self.neighbour.append(ampelVecino[0])
+                    position =self.model.grid.get_cell_list_contents((self.pos[0]-2, self.pos[1]-2))
+                    ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
+                    self.neighbour.append(ampelVecino[0])
+
+            
     def step(self):
-        """ 
-        To change the state (green or red) of the traffic light in case you consider the time to change of each traffic light.
+        if self.countStep==0:
+            self.setSensor()
+            countStep=1
+        self.ampelLogic()
+        
         """
-        # if self.model.schedule.steps % self.timeToChange == 0:
-        #     self.state = not self.state
-        pass
+        self.sema1=[(0,15),(0,16),(0,17)]
+        self.cont=0
+        "To change the state (green or red) of the traffic light in case you consider the time to change of each traffic light."
+        if self.unique_id == "tl_18" or self.unique_id == "tl_42" or self.unique_id == "tl_64" or self.unique_id == "tl_65":
+            self.currentStep += 1
+            if self.currentStep == 8:
+                self.state = "yellow"
+            elif self.currentStep == 10:
+                self.state = "red"
+            elif self.currentStep == 20:
+                self.currentStep = 0
+                self.state= "green"
+                """
+
 
 class Destination(Agent):
     """

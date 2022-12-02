@@ -26,7 +26,7 @@ def agent_portrayal(agent):
         portrayal["Layer"] = 0
 
     if (isinstance(agent, Traffic_Light)):
-        portrayal["Color"] = "red" if not agent.state else "green"
+        portrayal["Color"] = [agent.state]
         portrayal["Layer"] = 0
         portrayal["w"] = 0.8
         portrayal["h"] = 0.8
@@ -47,7 +47,11 @@ with open('2022_base.txt',"r") as baseFile:
     width = len(lines[0])-1
     height = len(lines)
 
+<<<<<<< HEAD
+model_params = {"N":300}
+=======
 model_params = {"N":100}
+>>>>>>> ff0e5b3996d75c4e98ed8e8d0422263422932db8
 
 print(width, height)
 grid = CanvasGrid(agent_portrayal, width, height, 500, 500)
