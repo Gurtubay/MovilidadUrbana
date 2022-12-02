@@ -38,7 +38,7 @@ public class AgentController : MonoBehaviour
     // private string url = "https://agents.us-south.cf.appdomain.cloud/";
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
-    //string getObstaclesEndpoint = "/getSemaforo";
+    string getStates = "/getStates";
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     AgentsData agentsData;
@@ -55,15 +55,12 @@ public class AgentController : MonoBehaviour
     void Start()
     {
         agentsData = new AgentsData();
-        //obstacleData = new AgentsData();
-
+        
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
 
         agents = new Dictionary<string, GameObject>();
 
-        //floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
-        //floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
         
         timer = timeToUpdate;
 
@@ -111,6 +108,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetAgentsData());
+            StartCoroutine(getStates());
         }
     }
 
@@ -135,7 +133,9 @@ public class AgentController : MonoBehaviour
             Debug.Log("Configuration upload complete!");
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetAgentsData());
-            //StartCoroutine(GetObstacleData());
+            Debug.Log("Getting States");
+            StartCoroutine(GetStates());
+
         }
     }
 
@@ -172,25 +172,25 @@ public class AgentController : MonoBehaviour
             if(!started) started = true;
         }
     }
-    /*
-    IEnumerator GetObstacleData() 
+    
+    IEnumerator GetStates() 
     {
-        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getObstaclesEndpoint);
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getStates);
         yield return www.SendWebRequest();
  
         if (www.result != UnityWebRequest.Result.Success)
             Debug.Log(www.error);
         else 
         {
-            obstacleData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
+            stateData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
 
-            Debug.Log(obstacleData.positions);
+            Debug.Log(stateData.positions);
 
-            foreach(AgentData obstacle in obstacleData.positions)
+            foreach(AgentData state in stateData.positions)
             {
                 Instantiate(obstaclePrefab, new Vector3(obstacle.x, obstacle.y, obstacle.z), Quaternion.identity);
             }
         }
     }
-    */
+    
 }

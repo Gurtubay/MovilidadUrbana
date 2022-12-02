@@ -38,7 +38,6 @@ def getAgents():
     global randomModel
 
     if request.method == 'GET':
-    #agentPositions = [{"id": str(X.unique_id), "x": x, "y":1, "z":y} for (X, x,y) in carringModel.grid.coord_iter() if isinstance(X, Stevedor)]
         agentPositions = []
         for(N,x, y) in randomModel.grid.coord_iter():
             for i in range(len(N)):
@@ -47,16 +46,20 @@ def getAgents():
         
         return jsonify({'positions':agentPositions})
 
-"""
-@app.route('/getSemaforos', methods=['GET'])
-def getSemaforos():
+@app.route('/getStates', methods=['GET'])
+def getAgents():
     global randomModel
-    
-    if request.method == 'GET':
-        carPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":y} for (a, x, z) in randomModel.grid.coord_iter() if isinstance(a, ObstacleAgent)]
 
-        return jsonify({'positions':carPositions})
-"""
+    if request.method == 'GET':
+        # agentPositions = []
+        agentStates =[]
+        for(N,state) in randomModel.grid.coord_iter():
+            for i in range(len(N)):
+                if isinstance(N[i], Car):
+                   # agentPositions.append({"id": str(N[i].unique_id), "x": x, "y":1, "z":y})
+                    agentStates.append({"id": str(N[i].unique_id), "state":state})
+        
+        return jsonify({'states':agentStates})
 
 @app.route('/update', methods=['GET'])
 def updateModel():
