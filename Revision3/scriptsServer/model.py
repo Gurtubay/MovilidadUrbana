@@ -95,12 +95,9 @@ class RandomModel(Model):
         N: Number of agents in the simulation
     """
     def __init__(self, N):
-<<<<<<< HEAD
         #addCars()
         #self.rutas = Grafo(self.next_id,self)
         #self.rutas=Grafo()
-=======
->>>>>>> ff0e5b3996d75c4e98ed8e8d0422263422932db8
         self.num_agents = N
         self.addCar()
         self.Ronda()
@@ -111,16 +108,15 @@ class RandomModel(Model):
     def step(self):
         '''Advance the model by one step.'''
 
-<<<<<<< HEAD
+
         if self.schedule.steps % 3 == 0:
             if self.num_agents > 0:
                 print(f"me mato aidrian{self.num_agents}")
                 #self.num_agents = self.arigato
                 #self.occupied = []
-=======
+
         elif self.schedule.steps % 5 == 0:
             if self.num_agents > 0:
->>>>>>> ff0e5b3996d75c4e98ed8e8d0422263422932db8
                 self.Ronda()
 
                 

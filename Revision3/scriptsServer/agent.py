@@ -66,8 +66,15 @@ class Car(Agent):
             position3 =self.model.grid.get_cell_list_contents(self.vision[6])
             cocheDelante3=[obj for obj in position3 if isinstance(obj,Car)]
             outIndex2=True
-            
-        if outIndex and outIndex1 and outIndex2:    
+        print(str(outIndex)+"Delante")
+        print(str(outIndex)+"Der")
+        print(str(outIndex)+"Izq")
+        
+        if outIndex and backAmpel:    
+            if len(cocheDelante)==0:
+                return True
+                
+        elif outIndex and outIndex1 and outIndex2:    
             if (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Down") and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Up") and self.lastDirection=="Right") or self.pos in rotondaPos:
                 return True
             elif (len(cocheDelante)==0 and (len(cocheDelante2)==0 or cocheDelante2[0].lastDirection != "Up") and (len(cocheDelante3)==0 or cocheDelante3[0].lastDirection != "Down") and self.lastDirection=="Left") or self.pos in rotondaPos:
@@ -113,7 +120,6 @@ class Car(Agent):
             self.vision[10]=(self.pos[0],self.pos[1]-1)
             
         elif self.lastDirection=="Right":
-            print("Reajuste")
             self.vision[0]=(self.pos[0]+1,self.pos[1])
             self.vision[1]=(self.pos[0]+2,self.pos[1])
             self.vision[2]=(self.pos[0]+3,self.pos[1])
@@ -314,7 +320,8 @@ class Car(Agent):
 #         print(self.destination)
         if self.pos==self.destination:
             ##Aqui se destruye el objeto
-            print("Prueba XD")
+            self.model.grid.remove_agent(self)
+            self.model.schedule.remove(self)
         else:
             self.move()
 
@@ -346,24 +353,39 @@ class Traffic_Light(Agent):
 #             self.currentStep = 10
         
     def ampelLogic(self):
-        print(self.pos)
-        print(self.vision[0])
         position =self.model.grid.get_cell_list_contents(self.vision[0])
         carWaiting1=[obj for obj in position if isinstance(obj,Car)]
         position =self.model.grid.get_cell_list_contents(self.vision[1])
         carWaiting2=[obj for obj in position if isinstance(obj,Car)]
         position =self.model.grid.get_cell_list_contents(self.vision[2])
         carWaiting3=[obj for obj in position if isinstance(obj,Car)]
+        
+        position =self.model.grid.get_cell_list_contents(self.pos)
+        carWaiting=[obj for obj in position if isinstance(obj,Car)]
+        position0 =self.model.grid.get_cell_list_contents(self.brother.pos)
+        carWaiting0=[obj for obj in position0 if isinstance(obj,Car)]
+        position2 =self.model.grid.get_cell_list_contents(self.neighbour[0].pos)
+        carNei1=[obj for obj in position2 if isinstance(obj,Car)]
+        position3 =self.model.grid.get_cell_list_contents(self.neighbour[0].pos)
+        carNei2=[obj for obj in position3 if isinstance(obj,Car)]
             
-        if self.state=="yellow" and self.neighbour[0].state=="yellow" and len(carWaiting3)>0:
-            self.state="red"
+        if (self.state=="yellow" and self.neighbour[0].state=="yellow" and len(carWaiting3)>0) or len(carWaiting)>0:
+            self.state="green"
             self.brother.state="green"
             self.neighbour[0].state="red"
             self.neighbour[1].state="red"
             self.carsPool=1
             
         elif self.state=="red" and self.neighbour[0].carsPool==0 and self.neighbour[1].carsPool==0:
-            if self.carsPool==0 and self.brother.carsPool==0:
+            position =self.model.grid.get_cell_list_contents(self.pos)
+            carWaiting=[obj for obj in position if isinstance(obj,Car)]
+            position0 =self.model.grid.get_cell_list_contents(self.brother.pos)
+            carWaiting0=[obj for obj in position0 if isinstance(obj,Car)]
+            position2 =self.model.grid.get_cell_list_contents(self.neighbour[0].pos)
+            carNei1=[obj for obj in position2 if isinstance(obj,Car)]
+            position3 =self.model.grid.get_cell_list_contents(self.neighbour[0].pos)
+            carNei2=[obj for obj in position3 if isinstance(obj,Car)]
+            if self.carsPool==0 and self.brother.carsPool==0 and len(carWaiting)==0 and len(carNei1)==0 and len(carNei2)==0 and len(carWaiting0)==0:
                 self.state="yellow"
                 self.brother.state="yellow"
                 self.neighbour[0].state="yellow"
@@ -376,7 +398,6 @@ class Traffic_Light(Agent):
                 self.countStep=1
                 self.neighbour[0].weight=1
                 self.neighbour[1].weight=1
-            
         elif len(carWaiting1)==0 and len(carWaiting2)==0 and len(carWaiting3)==0:
             self.carsPool=0
             
@@ -475,10 +496,6 @@ class Traffic_Light(Agent):
             self.carsPool=1
             self.weight+=self.carsPool*self.countStep
             self.countStep+=1
-            print(self.brother)
-            print(self.neighbour[0])
-            print(self.neighbour[1])
-            print(self.brother)
             if self.weight+self.brother.weight>=self.neighbour[0].weight+self.neighbour[1].weight:
                 self.state="green"
                 self.brother.state="green"
@@ -825,7 +842,6 @@ class Traffic_Light(Agent):
                 position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+1))
                 ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
                 if len(ampelVecino)>0:
-                    print(ampelVecino[0].pos)
                     self.neighbour.append(ampelVecino[0])
                     position =self.model.grid.get_cell_list_contents((self.pos[0]+1, self.pos[1]+2))
                     ampelVecino=[obj for obj in position if isinstance(obj,Traffic_Light)]
